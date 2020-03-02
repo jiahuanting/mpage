@@ -37,6 +37,7 @@ export default {
             xAxisDate: [],
             geoCoordMap: {},
             show_hide: false,
+            valid_countries: ["Korea","Japan"],
         }
     },
     mounted() {
@@ -134,6 +135,9 @@ export default {
     },
     methods: {
         activeCountry(coun) {
+            if(!this.isInArray(coun)) {
+                return;
+            }
             this.$axios.get("../../static/coun/"+coun+".json").then((resp)=> {
                 this.current_coun = coun;
                 this.predict_cases = resp.data.data.predict.value;
@@ -362,6 +366,14 @@ export default {
                 res.push([now.getFullYear(), now.getMonth() + 1, now.getDate()].join('/'));
             }
             return res;
+        },
+        isInArray(value){
+            for(var i = 0; i < this.valid_countries.length; i++) {
+                if(value === this.valid_countries[i]){
+                    return true;
+                }
+            }
+            return false;
         },
     }
     
