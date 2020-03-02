@@ -8,7 +8,6 @@ import Risk from '@/components/Risk';
 Vue.use(Router)
 
 export default new Router({
-  mode: 'history',
   routes: [
     {
       path: '/',
