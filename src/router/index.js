@@ -12,7 +12,10 @@ export default new Router({
     {
       path: '/',
       name: 'ChinaMap',
-      component: ChinaMap
+      component: ChinaMap,
+      meta: {
+        title: "新型冠状病毒疫情分析与预测地图",
+      }
     },
     {
       path: '/worldmap',
