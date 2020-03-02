@@ -1,0 +1,12 @@
+[
+    { "name": "Korea", "value": { "infect": 3526 } },
+    { "name": "Japan", "value": { "infect": 241 } },
+    { "name": "Thailand", "value": { "infect": 42 } },
+    { "name": "Singapore", "value": { "infect": 102 } },
+    { "name": "Iran", "value": { "infect": 593 } },
+    { "name": "America", "value": { "infect": 70 } },
+    { "name": "Italy", "value": { "infect": 1128 } },
+    { "name": "France", "value": { "infect": 100 } },
+    { "name": "Germany", "value": { "infect": 79 } },
+    { "name": "China", "value": { "infect": 79824 } }
+]
