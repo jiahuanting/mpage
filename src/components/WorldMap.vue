@@ -2,9 +2,21 @@
     <div id="content" ref="content">
       <!--初始化Echarts-->
       <div id="mapbox" ref="mapbox"></div>
-      <div id="inverse_card" ref="inverse-card">
+      <div id="inverse_card" ref="inverse-card" v-show="show_hide">
+        <div id="current_coun" ref="current_coun">
+            <h1>
+                <Icon type="ios-pin"></Icon>
+                {{ current_coun }}
+            </h1>
+            <hr>
+        </div>
         <div id="predict" ref="predict"></div>
         <div id="remaining" ref="remaining"></div>
+        <div id="statement" ref="statement">
+            <p>
+                注：本网站由北京航空航天大学计算机学院智慧城市(BIGSCity)课题组完成，受到国家重点研发计划项目"城市多样化场景模式挖掘与态势认知(2019YFB2102103)"支持。
+            </p>
+        </div>
       </div>
     </div>
 </template>
@@ -17,7 +29,14 @@ export default {
     name: 'WorldMap',
     data () {
         return {
-            
+            coun_data: [],
+            current_coun: "",
+            predict_cases: 0,
+            actual_cases: 0,
+            remaining_cases: 0,
+            xAxisDate: [],
+            geoCoordMap: {},
+            show_hide: false,
         }
     },
     mounted() {
@@ -38,19 +57,18 @@ export default {
                     left: 'left',
                     textStyle: {
                         fontSize: 30,
-                    }
+                        color: '#fff',
+                    },
+                    top: '20px'
                 },
-                backgroundColor: 'transparent',
                 tooltip: {
                     trigger: 'item',
                     formatter: function(params) {
-                        let tipString = "";
-                        if(params.data.value) {
-                            tipString = params.name + "<br />" + "确诊患者数 : " + params.data.value
+                        if(params.value) {
+                            return params.name + "<br />" + "Number of confirmed cases : " + params.value;
                         } else {
-                            tipString = params.name + "数据缺失"
+                            return;
                         }
-                        return tipString;
                     }
                 },  
                 series: [{
@@ -61,7 +79,7 @@ export default {
                     label: {
                     //控制对应地区的汉字
                         show: false,
-                        color: 'red',
+                        color: '#fff',
                         fontSize: 8
                     },
                     // 控制地图板块的样式
@@ -73,7 +91,7 @@ export default {
                         label: {
                             //控制对应地区的汉字
                             show: true,
-                            color: 'red',
+                            color: '#fff',
                             fontSize: 18
                         },
                         itemStyle: {
@@ -96,29 +114,49 @@ export default {
                     ],
                     color: ['#d94e5d','#eac736','#50a3ba'],
                     left: 'right',
+                    textStyle: {
+                        fontSize: 18,
+                        fontWeight: 'bold',
+                        color: '#fff',
+                    },
                 }]
             };
-            let mycharts = echarts.init(this.$refs.mapbox);
+
+            const mycharts = echarts.init(this.$refs.mapbox);
             mycharts.setOption(option);
-            this.mycharts = mycharts;
-            this.mycharts.on('click', function (params) {
-                alert(params.name);
+            
+            mycharts.on('click', (params) => { 
+                this.activeCountry(params.name);
             });
+            this.mycharts = mycharts;
         });
-        // this.activeCountry("全国_不含湖北");
         
     },
     methods: {
         activeCountry(coun) {
             this.$axios.get("../../static/coun/"+coun+".json").then((resp)=> {
+                this.current_coun = coun;
                 this.predict_cases = resp.data.data.predict.value;
                 this.actual_cases = resp.data.data.official_confirmed.value;
                 this.remaining_cases = resp.data.data.Remain_confirm.value;
+                const dateSeries1 = this.genDateArr(
+                    resp.data.data.predict.start_date, 
+                    resp.data.data.predict.end_date, 
+                    resp.data.data.predict.value
+                );
+                const dateSeries2 = this.genDateArr(
+                    resp.data.data.Remain_confirm.start_date, 
+                    resp.data.data.Remain_confirm.end_date, 
+                    resp.data.data.Remain_confirm.value
+                );
                 // 设置表格属性
                 let option_predict = {
                     title: {
                         text: "累计病例数",
-                        x: 'left'
+                        x: 'left',
+                        textStyle: {
+                            color: '#fff'
+                        }
                     },
                     tooltip: {
                         trigger: 'axis'
@@ -128,6 +166,16 @@ export default {
                         orient: 'horizontal',
                         x: 'center',
                         y: 'bottom',
+                        textStyle: {
+                            color: '#fff'
+                        }
+                    },
+                    grid:{
+                        x:50,
+                        y:50,
+                        x2:50,
+                        y2:50,
+                        borderWidth:1
                     },
                     toolbox: {
                         show: false,
@@ -144,7 +192,22 @@ export default {
                     xAxis: {
                         type: 'category',
                         boundaryGap: false,
-                        data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+                        splitLine: {
+                            show: false,
+                        },
+                        data: dateSeries1,
+                        axisLine: {
+                            lineStyle: {
+                                type: 'solid',
+                                color:'#fff',
+                                width:'2'
+                            }
+                        },
+                        axisLabel: {
+                            textStyle: {
+                                color: '#fff', //坐标轴的具体的颜色
+                            }
+                        },
                     },
                     yAxis: {
                         type: 'value',
@@ -152,6 +215,18 @@ export default {
                         scale: true,
                         splitLine: {
                             show: false,
+                        },
+                        axisLine: {
+                            lineStyle: {
+                                type: 'solid',
+                                color:'#fff',
+                                width:'2'
+                            }
+                        },
+                        axisLabel: {
+                            textStyle: {
+                                color: '#fff', //坐标轴的具体的颜色
+                            }
                         },
                     },
                     series: [
@@ -181,7 +256,10 @@ export default {
                 let option_remaining = {
                     title: {
                         text: "确诊存量",
-                        x: 'left'
+                        x: 'left',
+                        textStyle: {
+                            color: '#fff'
+                        }
                     },
                     tooltip: {
                         trigger: 'axis'
@@ -191,6 +269,16 @@ export default {
                         orient: 'horizontal',
                         x: 'center',
                         y: 'bottom',
+                        textStyle: {
+                            color: '#fff'
+                        }
+                    },
+                    grid:{
+                        x:50,
+                        y:50,
+                        x2:50,
+                        y2:50,
+                        borderWidth:1
                     },
                     toolbox: {
                         show: false,
@@ -207,7 +295,19 @@ export default {
                     xAxis: {
                         type: 'category',
                         boundaryGap: false,
-                        data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+                        data: dateSeries2,
+                        axisLine: {
+                            lineStyle: {
+                                type: 'solid',
+                                color:'#fff',
+                                width:'2'
+                            }
+                        },
+                        axisLabel: {
+                            textStyle: {
+                                color: '#fff', //坐标轴的具体的颜色
+                            }
+                        },
                     },
                     yAxis: {
                         type: 'value',
@@ -215,6 +315,18 @@ export default {
                         scale: true,
                         splitLine: {
                             show: false,
+                        },
+                        axisLine: {
+                            lineStyle: {
+                                type: 'solid',
+                                color:'#fff',
+                                width:'2'
+                            }
+                        },
+                        axisLabel: {
+                            textStyle: {
+                                color: '#fff', //坐标轴的具体的颜色
+                            }
                         },
                     },
                     series: [
@@ -230,17 +342,27 @@ export default {
                             },
                         },
                     ]
-                };
-                let table_predict = echarts.init(this.$refs.predict);
+                };                let table_predict = echarts.init(this.$refs.predict);
                 table_predict.setOption(option_predict);
                 let table_remaining = echarts.init(this.$refs.remaining);
                 table_remaining.setOption(option_remaining);
+                this.show_hide = true;
             }).catch(()=>{
-                this.$Message.error("该省市数据尚未处理完成");
-                this.$Loading.error();
+                return;
             });
         },
-
+        genDateArr(start, end, arr) {
+            const startDate = +new Date(start);
+            const endDate = +new Date(end);
+            const N = arr.length - 1;
+            const step = parseInt((endDate - startDate) / N);
+            let res = [];
+            for(let i=0; i<arr.length; i+=1) {
+                const now = new Date( + i * step + startDate);
+                res.push([now.getFullYear(), now.getMonth() + 1, now.getDate()].join('/'));
+            }
+            return res;
+        },
     }
     
 }
@@ -253,15 +375,14 @@ export default {
         height: calc(100% - 60px);
         top: 60px;
         width: 100%;
-        /* background-color: rgb(31, 61, 96); */
-        background-color: seashell;
+        background-color: rgb(11, 53, 102);
         padding: 0px;
         margin: 0px;
     }
     #mapbox {
         position: absolute;
-        height: 100%;
-        width: 100%;
+        height: calc(100% - 20px);
+        width: calc(100% - 20px);
         padding: 0px;
         margin: 0px;
     }
@@ -274,25 +395,32 @@ export default {
         padding: 10px;
         background-color: rgba(0, 0, 0, 0.5);
         color: #fff;
-        width: 400px;
         padding: 0px;
         margin: 0px;
-        width: 300px;
-        background-color: transparent;
+        width: 400px;
         text-align: left;
+    }
+    #current_coun {
+        position: relative;
+        height: 70px;
     }
     #predict {
         position: relative;
         left: 10px;
         bottom: 10px;
-        width: 300px;
+        width: 400px;
         height: 200px;
     }
     #remaining {
         position: relative;
         left: 10px;
         bottom: 10px;
-        width: 300px;
+        width: 400px;
         height: 200px;
+    }
+    #statement {
+        position: relative;
+        left: 10px;
+        right: 10px;
     }
 </style>

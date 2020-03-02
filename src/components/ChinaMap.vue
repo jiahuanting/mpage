@@ -12,6 +12,11 @@
         </div>
         <div id="predict" ref="predict"></div>
         <div id="remaining" ref="remaining"></div>
+        <div id="statement" ref="statement">
+            <p>
+                注：本网站由北京航空航天大学计算机学院智慧城市(BIGSCity)课题组完成，受到国家重点研发计划项目"城市多样化场景模式挖掘与态势认知(2019YFB2102103)"支持。
+            </p>
+        </div>
       </div>
     </div>
 </template>
@@ -56,7 +61,8 @@ export default {
                     textStyle: {
                         fontSize: 30,
                         color: '#fff',
-                    }
+                    },
+                    top: '20px'
                 },
                 // backgroundColor: 'transparent',
                 tooltip: {
@@ -96,12 +102,22 @@ export default {
                         },
                         seriesIndex:0,
                     },
+                    {
+                        type: 'continuous', // 定义为连续型 visualMap
+                        show: false,
+                        min: 0.1,
+                        max: 2,
+                        inRange: {
+                            color: [ 'red', '#aaa']
+                        },
+                        seriesIndex: 1,
+                    },
                     
                 ],
                 geo: {
                     type: 'map', //设置要渲染的类型
                     map: 'china', //设置地图名称
-                    zoom: 1.2, //设置地图初始显示大小
+                    zoom: 1.25, //设置地图初始显示大小
                     label: {
                         //控制对应地区的汉字
                         show: true,
@@ -153,33 +169,6 @@ export default {
                             }
                         },
                     },
-                    // {
-                    //     name: 'Top 5',
-                    //     type: 'effectScatter',
-                    //     coordinateSystem: 'bmap',
-                    //     data: convertData(data.sort(function (a, b) {
-                    //         return b.value - a.value;
-                    //     }).slice(0, 6)),
-                    //     symbolSize: function (val) {
-                    //         return val[2] / 10;
-                    //     },
-                    //     showEffectOn: 'emphasis',
-                    //     rippleEffect: {
-                    //         brushType: 'stroke'
-                    //     },
-                    //     hoverAnimation: true,
-                    //     label: {
-                    //         formatter: '{b}',
-                    //         position: 'right',
-                    //         show: true
-                    //     },
-                    //     itemStyle: {
-                    //         color: '#f4e925',
-                    //         shadowBlur: 10,
-                    //         shadowColor: '#333'
-                    //     },
-                    //     zlevel: 1
-                    // },
                 ],
                 
             };
@@ -198,9 +187,6 @@ export default {
         });
         
         this.activeCity("全国_不含湖北");
-        // let table = echarts.init(this.$refs.predict);
-        // table.setOption(option);
-
     },
     methods: {
         activeCity(prov) {
@@ -418,8 +404,7 @@ export default {
                 let table_remaining = echarts.init(this.$refs.remaining);
                 table_remaining.setOption(option_remaining);
             }).catch(()=>{
-                this.$Message.error("该省市数据尚未处理完成");
-                this.$Loading.error();
+                return;
             });
         },
         convertData() {
@@ -460,16 +445,14 @@ export default {
         height: calc(100% - 60px);
         top: 60px;
         width: 100%;
-        /* background-color: rgb(31, 61, 96); */
-        /* background-color: rgb(77, 41, 16); */
         background-color: rgb(11, 53, 102);
         padding: 0px;
         margin: 0px;
     }
     #mapbox {
         position: absolute;
-        height: 100%;
-        width: 100%;
+        height: calc(100% - 20px);
+        width: calc(100% - 20px);
         padding: 0px;
         margin: 0px;
     }
@@ -505,5 +488,10 @@ export default {
         bottom: 10px;
         width: 400px;
         height: 200px;
+    }
+    #statement {
+        position: relative;
+        left: 10px;
+        right: 10px;
     }
 </style>
