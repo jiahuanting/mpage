@@ -87,12 +87,10 @@ export default {
     },
     methods: {
         setZH(){
-            console.log("setZH");
             //这里的change函数记得加引号
             this.$store.commit("change", "zh");
         },
         setEN(){
-            console.log("setEN");
             this.$store.commit("change", "en");
         }
     }

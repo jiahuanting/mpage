@@ -82,7 +82,6 @@ export default {
     watch: {
         zh_en_signal: function(val, oldval) {
             this.initMap();
-            console.log(this.$store.state.zh_en);
         }
     },
     mounted() {
@@ -472,8 +471,7 @@ export default {
                 table_predict.setOption(option_predict);
                 let table_remaining = echarts.init(this.$refs.remaining);
                 table_remaining.setOption(option_remaining);
-            }).catch((e)=>{
-                console.log(e);
+            }).catch(()=>{
                 return;
             });
         },
