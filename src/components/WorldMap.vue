@@ -37,7 +37,7 @@ export default {
             xAxisDate: [],
             geoCoordMap: {},
             show_hide: false,
-            valid_countries: ["Korea","Japan"],
+            valid_countries: ["Korea","Japan","Iran","Italy"],
         }
     },
     mounted() {
@@ -66,6 +66,9 @@ export default {
                     trigger: 'item',
                     formatter: function(params) {
                         if(params.value) {
+                            if(params.name === "Korea") {
+                               return "South Korea" + "<br />" + "Number of confirmed cases : " + params.value;
+                            }
                             return params.name + "<br />" + "Number of confirmed cases : " + params.value;
                         } else {
                             return;
@@ -126,7 +129,7 @@ export default {
             const mycharts = echarts.init(this.$refs.mapbox);
             mycharts.setOption(option);
             
-            mycharts.on('click', (params) => { 
+            mycharts.on('click', (params) => {
                 this.activeCountry(params.name);
             });
             this.mycharts = mycharts;
@@ -140,6 +143,9 @@ export default {
             }
             this.$axios.get("../../static/coun/"+coun+".json").then((resp)=> {
                 this.current_coun = coun;
+                if(coun === "Korea") {
+                    this.current_coun = "South Korea";
+                }
                 this.predict_cases = resp.data.data.predict.value;
                 this.actual_cases = resp.data.data.official_confirmed.value;
                 this.remaining_cases = resp.data.data.Remain_confirm.value;
@@ -346,7 +352,8 @@ export default {
                             },
                         },
                     ]
-                };                let table_predict = echarts.init(this.$refs.predict);
+                };
+                let table_predict = echarts.init(this.$refs.predict);
                 table_predict.setOption(option_predict);
                 let table_remaining = echarts.init(this.$refs.remaining);
                 table_remaining.setOption(option_remaining);
