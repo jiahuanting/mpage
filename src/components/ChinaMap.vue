@@ -24,9 +24,9 @@
 <script>
 import echarts from 'echarts';
 import 'echarts/map/js/china.js';
+import nameMap from '@/assets/NameMapProv';
 const config = {
     fontColor: "#fff",
-
 };
 const zh = {
     title: "COVID-19全球疫情分析与预测地图",
@@ -122,10 +122,12 @@ export default {
             this.activeCity("全国_不含湖北");
         },
         getMapOption() {
-            let lang = {}
+            let lang = {};
+            let signal = 0;
             if(this.$store.state.zh_en === "zh") {
                 lang = this.zh;
             } else {
+                signal = 1;
                 lang = this.en;
             }
             let option = {
@@ -145,6 +147,10 @@ export default {
                 tooltip: {
                     trigger: 'item',
                     formatter: function(params) {
+                        if(signal) {
+                            tipString = nameMap[params.name] + "<br />" + lang.tooltip + " : " + params.data.value + "<br />" + "R0 : " + params.data.R0
+                            return tipString;
+                        }
                         if(params.name.length == 0) {
                             return
                         }
@@ -199,7 +205,15 @@ export default {
                         //控制对应地区的汉字
                         show: true,
                         color: '#fff',
-                        fontSize: 12
+                        fontSize: 12,
+                        formatter: function(params) {
+                            if(signal) {
+                                return nameMap[params.name];
+                            } else {
+                                return params.name;
+                            }
+                            
+                        }
                     },
                     // 鼠标移动到板块上以后的样式 把外面的label和itemStyle放进来就行了
                     emphasis: {
@@ -259,7 +273,11 @@ export default {
                 lang = this.en;
             }
             this.$axios.get("../../static/prov/"+prov+".json").then((resp)=> {
-                this.current_city = prov;
+                if(this.$store.state.zh_en === "en") {
+                    this.current_city = nameMap[prov];
+                } else {
+                    this.current_city = prov;
+                }
                 this.predict_cases = resp.data.data.predict.value;
                 this.actual_cases = resp.data.data.official_confirmed.value;
                 this.remaining_cases = resp.data.data.Remain_confirm.value;

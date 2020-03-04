@@ -24,9 +24,9 @@
 <script>
 import echarts from 'echarts';
 import 'echarts/map/js/world.js';
+import nameMap from '@/assets/NameMapCoun';
 const config = {
     fontColor: "#fff",
-
 };
 const zh = {
     title: "COVID-19全球疫情分析与预测地图",
@@ -114,11 +114,16 @@ export default {
         },
         getMapOption() {
             let lang = {};
+            let signal = 0;
             if(this.$store.state.zh_en === "zh") {
+                signal = 1;
                 lang = this.zh;
             } else {
                 lang = this.en;
             }
+            // for(let key in nameMap) {
+            //     nameMap[key.toLowerCase()] = nameMap[key];
+            // }
             let option = {
                 title: {
                     text: lang.title,
@@ -135,13 +140,25 @@ export default {
                 tooltip: {
                     trigger: 'item',
                     formatter: function(params) {
-                        if(params.value) {
-                            if(params.name === "Korea") {
-                            return "South Korea" + "<br />" + lang.tooltip + " : " + params.value;
-                            }
-                            return params.name + "<br />" + lang.tooltip + " : " + params.value;
-                        } else {
-                            return;
+                        if(signal) {
+                            if(params.value) {
+                                if(params.name === "Korea") {
+                                    return nameMap[params.name] + "<br />" + lang.tooltip + " : " + params.value;
+                                }
+                                return nameMap[params.name] + "<br />" + lang.tooltip + " : " + params.value;
+                            } else {
+                                return;
+                            }    
+                        }
+                        else {
+                            if(params.value) {
+                                if(params.name === "Korea") {
+                                    return "South Korea" + "<br />" + lang.tooltip + " : " + params.value;
+                                }
+                                return params.name + "<br />" + lang.tooltip + " : " + params.value;
+                            } else {
+                                return;
+                            }    
                         }
                     }
                 },  
@@ -154,7 +171,14 @@ export default {
                     //控制对应地区的汉字
                         show: false,
                         color: '#fff',
-                        fontSize: 8
+                        fontSize: 8,
+                        formatter: function(params) {
+                            if(signal) {
+                                return nameMap[params.name];
+                            } else {
+                                return params.name;
+                            }
+                        }
                     },
                     // 控制地图板块的样式
                     itemStyle: {
@@ -208,9 +232,18 @@ export default {
                 lang = this.en;
             }
             this.$axios.get("../../static/coun/"+coun+".json").then((resp)=> {
-                this.current_coun = coun;
+                if(this.$store.state.zh_en === "zh") {
+                    this.current_coun = nameMap[coun];
+                } else {
+                    this.current_coun = coun;
+                }
                 if(coun === "Korea") {
-                    this.current_coun = "South Korea";
+                    if(this.$store.state.zh_en === "en") {
+                        this.current_coun = "South Korea";
+                    } else {
+                        this.current_coun = "韩国";
+                    }
+                    
                 }
                 this.predict_cases = resp.data.data.predict.value;
                 this.actual_cases = resp.data.data.official_confirmed.value;
