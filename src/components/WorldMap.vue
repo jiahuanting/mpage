@@ -13,8 +13,8 @@
         <div id="predict" ref="predict"></div>
         <div id="remaining" ref="remaining"></div>
         <div id="statement" ref="statement">
-            <p>
-                注：本网站由北京航空航天大学计算机学院智慧城市(BIGSCity)课题组完成，受到国家重点研发计划项目"城市多样化场景模式挖掘与态势认知(2019YFB2102103)"支持。
+            <p style="margin:0px; padding: 0px;">
+                {{ this.$store.state.zh_en === "zh" ? zh.statement : en.statement }}
             </p>
         </div>
       </div>
@@ -24,7 +24,40 @@
 <script>
 import echarts from 'echarts';
 import 'echarts/map/js/world.js';
+const config = {
+    fontColor: "#fff",
 
+};
+const zh = {
+    title: "COVID-19全球疫情分析与预测地图",
+    nav1: "中国疫情地图",
+    nav2: "世界疫情地图",
+    nav3: "",
+    nav4: "疫情风险预测",
+    legendText: "累计确诊病例",
+    tooltip: "确诊患者数",
+    dataNotFound: "数据缺失",
+    chartY1: "累计病例数",
+    chartY2: "确诊存量",
+    line1: "预测确诊病例",
+    line2: "真实确诊病例",
+    statement: "注：本网站由北京航空航天大学计算机学院智慧城市(BIGSCity)课题组完成，受到国家重点研发计划项目\"城市多样化场景模式挖掘与态势认知(2019YFB2102103)\"支持。"
+};
+const en = {
+    title: "Global COVID-19 Epidemic Evaluation and Prediction Map",
+    nav1: "China Epidemic Map",
+    nav2: "World Epidemic Map",
+    nav3: "",
+    nav4: "Epidemic Risk Forecast",
+    legendText: "Cumulative Confirmed Cases",
+    tooltip: "Cumulative confirmed cases",
+    chartY1: "Cumulative Confirmed Cases",
+    chartY2: "Remaining Confirmed Cases",
+    dataNotFound: "Data missing",
+    line1: "Predict",
+    line2: "Actual",
+    statement: "This website is developed by BIGSCity research group, School of Computer Science, Beihang University, and supported by the National Key Research and Development Program \" Pattern Mining and Situation Recognition of Urban Diversified Scenes (2019YFB2102103)\""
+};
 export default {
     name: 'WorldMap',
     data () {
@@ -38,20 +71,58 @@ export default {
             geoCoordMap: {},
             show_hide: false,
             valid_countries: ["Korea","Japan","Iran","Italy"],
+            en: en,
+            zh: zh,
+        }
+    },
+    computed: {
+        zh_en_signal: function() {
+            return this.$store.state.zh_en;
+        }
+    },
+    watch: {
+        zh_en_signal: function(val, oldval) {
+            this.initMap();
+            console.log(this.$store.state.zh_en);
         }
     },
     mounted() {
-        // 获取各省确诊病例数以及R0
-        this.$axios.get('../../static/world_data.json').then((resp)=>{
-            this.prov_data = resp.data.map((item) => {
-                return {
-                    name: item.name,
-                    value: item.value.infect,
-                }
-            }); 
+        this.initMap();
+    },
+    methods: {
+        initMap() {
+            // 获取各国确诊病例数以及R0
+            this.$axios.get('../../static/world_data.json').then((resp)=>{
+                this.prov_data = resp.data.map((item) => {
+                    return {
+                        name: item.name,
+                        value: item.value.infect,
+                    }
+                }); 
+                let option = this.getMapOption();
+                
+                const mycharts = echarts.init(this.$refs.mapbox);
+                mycharts.setOption(option);
+                
+                mycharts.on('click', (params) => {
+                    this.activeCountry(params.name);
+                });
+                this.mycharts = mycharts;
+            });
+            if(this.current_coun != "") {
+                this.activeCountry(this.current_coun);
+            }
+        },
+        getMapOption() {
+            let lang = {};
+            if(this.$store.state.zh_en === "zh") {
+                lang = this.zh;
+            } else {
+                lang = this.en;
+            }
             let option = {
                 title: {
-                    text: "COVID-19全球疫情分析与预测地图",
+                    text: lang.title,
                     subtext: 'BUAA BIGSCITY Research',
                     sublink: 'http://www.bigscity.com',
                     x: "center",
@@ -67,9 +138,9 @@ export default {
                     formatter: function(params) {
                         if(params.value) {
                             if(params.name === "Korea") {
-                               return "South Korea" + "<br />" + "Number of confirmed cases : " + params.value;
+                            return "South Korea" + "<br />" + lang.tooltip + " : " + params.value;
                             }
-                            return params.name + "<br />" + "Number of confirmed cases : " + params.value;
+                            return params.name + "<br />" + lang.tooltip + " : " + params.value;
                         } else {
                             return;
                         }
@@ -108,13 +179,13 @@ export default {
                     type: 'piecewise',
                     show: true,
                     pieces: [
-                        {gt: 5000, label: '累计确诊病例 > 5000'},  
+                        {gt: 5000, label: lang.legendText  + ' > 5000'},  
                         {gt: 1000, lte: 5000},        
                         {gt: 500, lte: 1000},
                         {gt: 100, lte: 500},
                         {gt: 50, lte: 100},
                         {gte: 10, lte: 50},
-                        {lte: 10, label: '累计确诊病例 < 10'},
+                        {lte: 10, label: lang.legendText + ' < 10'},
                     ],
                     color: ['#d94e5d','#eac736','#50a3ba'],
                     left: 'right',
@@ -125,21 +196,17 @@ export default {
                     },
                 }]
             };
-
-            const mycharts = echarts.init(this.$refs.mapbox);
-            mycharts.setOption(option);
-            
-            mycharts.on('click', (params) => {
-                this.activeCountry(params.name);
-            });
-            this.mycharts = mycharts;
-        });
-        
-    },
-    methods: {
+            return option;
+        },
         activeCountry(coun) {
             if(!this.isInArray(coun)) {
                 return;
+            }
+            let lang = {};
+            if(this.$store.state.zh_en === "zh") {
+                lang = this.zh;
+            } else {
+                lang = this.en;
             }
             this.$axios.get("../../static/coun/"+coun+".json").then((resp)=> {
                 this.current_coun = coun;
@@ -162,8 +229,9 @@ export default {
                 // 设置表格属性
                 let option_predict = {
                     title: {
-                        text: "累计病例数",
+                        text: lang.chartY1,
                         x: 'left',
+                        y: 10,
                         textStyle: {
                             color: '#fff'
                         }
@@ -172,7 +240,7 @@ export default {
                         trigger: 'axis'
                     },
                     legend: {
-                        data: ['预测确诊病例', '真实确诊病例'],
+                        data: [lang.line1, lang.line2],
                         orient: 'horizontal',
                         x: 'center',
                         y: 'bottom',
@@ -241,7 +309,7 @@ export default {
                     },
                     series: [
                         {
-                            name: '预测确诊病例',
+                            name: lang.line1,
                             type: 'line',
                             data: this.predict_cases,
                             markPoint: {
@@ -252,7 +320,7 @@ export default {
                             },
                         },
                         {
-                            name: '真实确诊病例',
+                            name: lang.line2,
                             type: 'line',
                             data: this.actual_cases,
                             markPoint: {
@@ -265,8 +333,9 @@ export default {
                 };
                 let option_remaining = {
                     title: {
-                        text: "确诊存量",
+                        text: lang.chartY2,
                         x: 'left',
+                        y: 10,
                         textStyle: {
                             color: '#fff'
                         }
@@ -275,7 +344,7 @@ export default {
                         trigger: 'axis'
                     },
                     legend: {
-                        data: ['确诊存量'],
+                        data: [lang.chartY2],
                         orient: 'horizontal',
                         x: 'center',
                         y: 'bottom',
@@ -341,13 +410,13 @@ export default {
                     },
                     series: [
                         {
-                            name: '确诊存量',
+                            name: lang.chartY2,
                             type: 'line',
                             data: this.remaining_cases,
                             markPoint: {
                                 data: [
-                                    {type: 'max', name: '最大值'},
-                                    {type: 'min', name: '最小值'}
+                                    {type: 'max'},
+                                    {type: 'min'}
                                 ]
                             },
                         },
@@ -358,7 +427,8 @@ export default {
                 let table_remaining = echarts.init(this.$refs.remaining);
                 table_remaining.setOption(option_remaining);
                 this.show_hide = true;
-            }).catch(()=>{
+            }).catch((e)=>{
+                console.log(e);
                 return;
             });
         },
@@ -426,13 +496,13 @@ export default {
     #predict {
         position: relative;
         left: 10px;
-        bottom: 10px;
+        bottom: 0px;
         width: 400px;
         height: 200px;
     }
     #remaining {
         position: relative;
-        left: 10px;
+        left: 0px;
         bottom: 10px;
         width: 400px;
         height: 200px;
@@ -440,6 +510,7 @@ export default {
     #statement {
         position: relative;
         left: 10px;
-        right: 10px;
+        bottom: 5px;
+        width: 380px;
     }
 </style>
