@@ -23,6 +23,7 @@
   
 <script>
 import echarts from 'echarts';
+// import * as echarts from '../static/echarts.min';
 import 'echarts/map/js/china.js';
 import nameMap from '@/assets/NameMapProv';
 const config = {
@@ -147,12 +148,12 @@ export default {
                 tooltip: {
                     trigger: 'item',
                     formatter: function(params) {
+                        if(params.name.length == 0) {
+                            return
+                        }
                         if(signal) {
                             tipString = nameMap[params.name] + "<br />" + lang.tooltip + " : " + params.data.value + "<br />" + "R0 : " + params.data.R0
                             return tipString;
-                        }
-                        if(params.name.length == 0) {
-                            return
                         }
                         let tipString = "";
                         if(params.data.value) {
