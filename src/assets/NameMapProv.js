@@ -1,6 +1,6 @@
 export default {
-    '全国_不含湖北': 'China',
-    '湖北_不含武汉': 'Hubei',
+    '全国_不含湖北': 'China(Excluding Hubei)',
+    '湖北_不含武汉': 'Hubei(Excluding Wuhan)',
     '湖北': 'Hubei',
     '广东': 'Guangdong',
     '北京': 'Beijing',
