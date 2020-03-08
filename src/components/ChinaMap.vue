@@ -30,7 +30,7 @@ const config = {
     fontColor: "#fff",
 };
 const zh = {
-    title: "COVID-19全球疫情分析与预测地图",
+    title: "全国疫情分析与预测地图",
     nav1: "中国疫情地图",
     nav2: "世界疫情地图",
     nav3: "",
@@ -45,7 +45,7 @@ const zh = {
     statement: "注：本网站由北京航空航天大学计算机学院智慧城市(BIGSCity)课题组完成，受到国家重点研发计划项目\"城市多样化场景模式挖掘与态势认知(2019YFB2102103)\"支持。",
 };
 const en = {
-    title: "Global COVID-19 Epidemic Evaluation and Prediction Map",
+    title: "National COVID-19 Epidemic Evaluation and Prediction Map",
     nav1: "China Epidemic Map",
     nav2: "World Epidemic Map",
     nav3: "",
