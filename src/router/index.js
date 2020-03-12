@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import ChinaMap from '@/components/ChinaMap';
 import WorldMap from '@/components/WorldMap';
-import Beijing from '@/components/Beijing';
+import Resumption from '@/components/Resumption';
 import Risk from '@/components/Risk';
 
 Vue.use(Router)
@@ -23,9 +23,9 @@ export default new Router({
       component: WorldMap
     },
     {
-      path: '/beijing',
-      name: 'Beijing',
-      component: Beijing
+      path: '/resumption',
+      name: 'Resumption',
+      component: Resumption
     },
     {
       path: '/risk',

@@ -33,7 +33,7 @@ const zh = {
     title: "全国疫情分析与预测地图",
     nav1: "中国疫情地图",
     nav2: "世界疫情地图",
-    nav3: "",
+    nav3: "复工情况",
     nav4: "疫情风险预测",
     legendText: "累计确诊病例",
     tooltip: "确诊患者数",
@@ -48,7 +48,7 @@ const en = {
     title: "National COVID-19 Epidemic Evaluation and Prediction Map",
     nav1: "China Epidemic Map",
     nav2: "World Epidemic Map",
-    nav3: "",
+    nav3: "Labor Resumption",
     nav4: "Epidemic Risk Forecast",
     legendText: "Cumulative Confirmed Cases",
     tooltip: "Cumulative confirmed cases",
@@ -148,6 +148,7 @@ export default {
                 tooltip: {
                     trigger: 'item',
                     formatter: function(params) {
+                        console.log(params);
                         if(params.name.length == 0) {
                             return
                         }

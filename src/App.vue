@@ -7,18 +7,28 @@
           {{ zh_en.nav1 }}
       </MenuItem>
       </router-link>
+      
       <router-link to="/worldmap">
       <MenuItem name="2">
           <!-- <Icon type="ios-people" /> -->
           {{ zh_en.nav2 }}
       </MenuItem>
       </router-link>
+      
+      <router-link to="/resumption">
+      <MenuItem name="3">
+        <!-- <Icon type="ios-people" /> -->
+        {{ zh_en.nav3 }}
+      </MenuItem>
+      </router-link>
+        
       <router-link to="/risk">
       <MenuItem name="4">
           <!-- <Icon type="ios-construct" />想 -->
           {{ zh_en.nav4 }}
       </MenuItem>
       </router-link>
+     
       <MenuItem name="5" style="float: right;">
         <ButtonGroup :size="buttonSize">
           <Button :size="buttonSize" type="default" @click="setZH">
@@ -39,14 +49,14 @@ const zh = {
     title: "COVID-19全球疫情分析与预测地图",
     nav1: "中国疫情地图",
     nav2: "世界疫情地图",
-    nav3: "",
+    nav3: "复工情况",
     nav4: "疫情风险预测",
 };
 const en = {
     title: "Global COVID-19 Epidemic Evaluation and Prediction Map",
     nav1: "China Epidemic Map",
     nav2: "World Epidemic Map",
-    nav3: "",
+    nav3: "Labor Resumption",
     nav4: "Epidemic Risk Forecast",
 };
 export default {
@@ -70,7 +80,7 @@ export default {
                     title: "COVID-19全球疫情分析与预测地图",
                     nav1: "中国疫情地图",
                     nav2: "世界疫情地图",
-                    nav3: "",
+                    nav3: "复工情况",
                     nav4: "疫情风险预测",
                 };
             } else {
@@ -78,7 +88,7 @@ export default {
                     title: "Global COVID-19 Epidemic Evaluation and Prediction Map",
                     nav1: "China Epidemic Map",
                     nav2: "World Epidemic Map",
-                    nav3: "",
+                    nav3: "Work Resumption",
                     nav4: "Epidemic Risk Forecast",
                 };
             }
@@ -97,9 +107,10 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 html, body {
     padding: 0px;
     margin: 0px;
+    width: 100%;
 }
 </style>
