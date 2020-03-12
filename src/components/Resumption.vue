@@ -21,13 +21,8 @@
 </template>
   
 <script>
-import echarts from 'echarts';
-// import * as echarts from '../static/echarts.min';
-// import 'echarts/map/js/china.js';
 import nameMap from '@/assets/NameMapProv';
-const config = {
-    fontColor: "#fff",
-};
+
 const zh = {
     title1: "国内复工指数统计",
     title2: "国内缺工指数统计",
@@ -151,7 +146,6 @@ export default {
             } else {
                 lang = this.en;
             }
-            console.log(lang);
             if(map_name == "resumption") {
                 // 2020年复工率最小最大值 0.0989 0.855
                 let data_resumption = {
@@ -181,7 +175,6 @@ export default {
                     this.initSideCard(params);
                 });
             } else {
-                console.log("切换到lack of work地图");
                 // 2020相对2019缺工率最小最大值 0.1302 196.0839
                 let data_lack = {
                     name: lang.title2,
@@ -332,7 +325,6 @@ export default {
             return option;
         },
         base_option(data) {
-            console.log(data.visualMap);
             let option = {
                 title: {
                     text: data.name,

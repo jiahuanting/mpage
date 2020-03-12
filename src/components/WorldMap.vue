@@ -22,9 +22,6 @@
 </template>
   
 <script>
-import echarts from 'echarts';
-// import * as echarts from '../static/echarts.min';
-import 'echarts/map/js/world.js';
 import nameMap from '@/assets/NameMapCoun';
 const config = {
     fontColor: "#fff",

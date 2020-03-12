@@ -22,13 +22,8 @@
 </template>
   
 <script>
-import echarts from 'echarts';
-// import * as echarts from '../static/echarts.min';
-import 'echarts/map/js/china.js';
 import nameMap from '@/assets/NameMapProv';
-const config = {
-    fontColor: "#fff",
-};
+
 const zh = {
     title: "全国疫情分析与预测地图",
     nav1: "中国疫情地图",
