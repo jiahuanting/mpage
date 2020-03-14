@@ -5,6 +5,12 @@
         <div id="inverse_card_left" ref="inverse_card_left" v-show="show_side_card"></div>
         <div id="inverse_card_right" ref="inverse_card_right" v-show="show_side_card"></div>
         <div id="inverse_card_bottom" ref="inverse_card_bottom" v-show="show_bottom_card"></div>
+        <div id="show_button" ref="show_button"> 
+            <Button :size="buttonSize" type="primary" @click="showCard">
+                {{ this.show_side_card ? this.$store.state.zh_en === "zh" ? zh.buttonText3 : en.buttonText3 : this.$store.state.zh_en === "zh" ? zh.buttonText4 : en.buttonText4 }}
+                
+            </Button>
+        </div>
         <div id="select_button" ref="select_button">
             <ButtonGroup :size="buttonSize" style="float: right;">
                 <Button :size="buttonSize" type="primary" @click="switchResumption">
@@ -24,11 +30,11 @@
 import nameMap from '@/assets/NameMapProv';
 
 const zh = {
-    title1: "国内复工指数统计",
-    title2: "国内缺工指数统计",
+    title1: "中国复工复产地图",
+    title2: "中国复工复产地图",
     nav1: "中国疫情地图",
     nav2: "世界疫情地图",
-    nav3: "复工情况",
+    nav3: "复工复产地图",
     nav4: "疫情风险预测",
     legendText1: "复工指数",
     legendText2: "缺工指数",
@@ -36,16 +42,19 @@ const zh = {
     tooltip2: "2020 复工指数",
     tooltip3: "2019 缺工指数",
     tooltip4: "2020 缺工指数",
-    tooltip5: "相对指数",
-    cardTitle1: " : 近七日迁出去向前十位的城市",
-    cardTitle2: " : 近七日迁入来源前十位的城市",
+    tooltip5: "恢复指数",
+    cardTitle1: "GDP加权复工指数Top10",
+    cardTitle2: "GDP加权缺工指数Top10",
+    cardTitle3: "全国GDP加权复工指数",
     buttonText1: "复工指数",
     buttonText2: "缺工指数",
+    buttonText3: "隐藏图表",
+    buttonText4: "显示图表",
     statement: "注：本网站由北京航空航天大学计算机学院智慧城市(BIGSCity)课题组完成，受到国家重点研发计划项目\"城市多样化场景模式挖掘与态势认知(2019YFB2102103)\"支持。",
 };
 const en = {
-    title1: "National Labor Resumption Index",
-    title2: "National Labor Shortage Index",
+    title1: "China Map of Labor Resumption",
+    title2: "China Map of Labor Resumption",
     nav1: "China Epidemic Map",
     nav2: "World Epidemic Map",
     nav3: "Labor Resumption",
@@ -56,11 +65,14 @@ const en = {
     tooltip2: "2020 Resumption Index",
     tooltip3: "2019 Shortage Index",
     tooltip4: "2020 Shortage Index",
-    tooltip5: "Relative Index",
-    cardTitle1: " : Top 10 Move-out Destination Last Week",
-    cardTitle2: " : Top 10 Move-in Source Last Week",
+    tooltip5: "Recovery index",
+    cardTitle1: "GDP-Weighted Resumption Index",
+    cardTitle2: "GDP-Weighted Shortage Index",
+    cardTitle3: "GDP-Weighted National Resumption Index",
     buttonText1: "Resumption Index",
     buttonText2: "Shortage Index",
+    buttonText3: "Hide Charts",
+    buttonText4: "Show Charts",
     statement: "This website is developed by BIGSCity research group, School of Computer Science, Beihang University, and supported by the National Key Research and Development Program \" Pattern Mining and Situation Recognition of Urban Diversified Scenes (2019YFB2102103)\"",
 };
 
@@ -73,7 +85,7 @@ export default {
             en: en,
             zh: zh,
             show_side_card: false,
-            show_bottom_card: false,
+            show_bottom_card: true,
             viewType: "resumption",
             buttonSize: "large",
             current_city: {},
@@ -87,7 +99,8 @@ export default {
     watch: {
         zh_en_signal: function(val, oldval) {
             this.initMap();
-            this.initSideCard(this.current_city);
+            this.initSideCard();
+            this.initBottomCard();
         }
     },
     mounted() {
@@ -98,7 +111,8 @@ export default {
             this.$axios.get("../../static/map/china-cities.json").then((resp)=>{
                 echarts.registerMap("china-cities", resp.data);
                 this.$axios.get("../../static/resumption.json").then((resp)=>{
-                    this.resumption_data = resp.data.map((item)=>{
+                    // 复工缺工指数数据在返回数据的"data"里
+                    this.resumption_data = resp.data.data.map((item)=>{
                         return {
                             name: item.name,
                             value: item.work_resumption_2020,
@@ -111,22 +125,25 @@ export default {
                             }
                         }
                     });
-                    this.lack_data = resp.data.map((item)=>{
+                    this.lack_data = resp.data.data.map((item)=>{
                         return {
                             name: item.name,
                             value: item.lack_of_work_2020,
                             values: {
                                 lack_of_work_2019: item.lack_of_work_2019,
                                 lack_of_work_2020: item.lack_of_work_2020,
-                                move_in_last_7_days: item.move_in_last_7_days,
-                                move_out_last_7_days: item.move_out_last_7_days
                             }
                         }
                     });
-                    
+                    // 年后净流入指数排名前十和净流出前十的城市
+                    this.GDPWeightedResumption = resp.data.GDPWeightedResumption;
+                    this.GDPWeightedShortage = resp.data.GDPWeightedShortage;
+                    this.bottomCard = resp.data.bottomCard;
                     const myChart = echarts.init(this.$refs.mapbox);
                     this.myChart = myChart;
                     this.switchMap("resumption");
+                    this.initSideCard();
+                    this.initBottomCard();
                 })
             })
 
@@ -160,7 +177,7 @@ export default {
                         max: 1,
                         calculable: true, //是否显示拖拽用的手柄（手柄能拖拽调整选中范围）。
                         inRange: {
-                            color: ['aqua', 'darkblue'] //颜色
+                            color: ['#FF0000', "#DDDDDD"] //颜色
                         },
                         left: 'left',
                         textStyle: {
@@ -171,9 +188,6 @@ export default {
                 };
                 this.myChart.clear();
                 this.myChart.setOption(this.base_option(data_resumption));
-                this.myChart.on('click', (params) => {
-                    this.initSideCard(params);
-                });
             } else {
                 // 2020相对2019缺工率最小最大值 0.1302 196.0839
                 let data_lack = {
@@ -187,13 +201,12 @@ export default {
                         type: 'piecewise',
                         show: true,
                         pieces: [
-                            {gt: 160, label: lang.legendText2 +' > 160'},  
-                            {gt: 120, lte: 160},        
-                            {gt: 80, lte: 120},
-                            {gt: 40, lte: 80},
-                            {gt: 20, lte: 40},
-                            {gte: 10, lte: 20},
-                            {lte: 10, label: lang.legendText2 + ' < 10'},
+                            {gt: 50, label: ' > 50'},          
+                            {gt: 10, lte: 50},
+                            {gt: 3, lte: 10},
+                            {gt: 1, lte: 3},
+                            {gte: 0.1, lte: 1},
+                            {lte: 0.1, label: ' < 0.1'},
                         ],
                         left: 'left',
                         color: ['#d94e5d','#eac736','#50a3ba'],
@@ -208,32 +221,38 @@ export default {
                 }
                 this.myChart.clear();
                 this.myChart.setOption(this.base_option(data_lack));
-                this.myChart.on('click', (params) => {
-                    this.initSideCard(params);
-                });
             }
         },
-        initSideCard(params) {
-            this.current_city = params;
+        initSideCard() {
             let lang = {};
             if(this.$store.state.zh_en === "zh") {
                 lang = this.zh;
             } else {
                 lang = this.en;
             }
-            let key_value_left = this.transformData(params.data.values.move_in_last_7_days);
+            let cities_left = [];
+            let values_left = [];
+            this.GDPWeightedResumption.forEach((item)=>{
+                cities_left.push(item.city);
+                values_left.push(item.value);
+            });
             let data_left = {
-                name: params.name + lang.cardTitle1,
-                key_list: key_value_left.key_list,
-                value_list: key_value_left.value_list,
+                name: lang.cardTitle1,
+                key_list: cities_left,
+                value_list: values_left,
             }
             let option_left = this.side_card_option(data_left);
 
-            let key_value_right = this.transformData(params.data.values.move_out_last_7_days)
+            let cities_right = [];
+            let values_right = [];
+            this.GDPWeightedShortage.forEach((item)=>{
+                cities_right.push(item.city);
+                values_right.push(item.value);
+            })
             let data_right = {
-                name: params.name + lang.cardTitle2,
-                key_list: key_value_right.key_list,
-                value_list: key_value_right.value_list,
+                name: lang.cardTitle2,
+                key_list: cities_right,
+                value_list: values_right,
             }
             let option_right = this.side_card_option(data_right);
 
@@ -244,6 +263,145 @@ export default {
             myRightCard.setOption(option_right);
             this.myLeftCard = myLeftCard;
             this.myRightCard = myRightCard;
+        },
+        initBottomCard() {
+            let lang = {};
+            if(this.$store.state.zh_en === "zh") {
+                lang = this.zh;
+            } else {
+                lang = this.en;
+            }
+            let option = {
+                // backgroundColor: '#080b30',
+                title: {
+                    text: lang.cardTitle3,
+                    textStyle: {
+                        align: 'center',
+                        color: '#fff',
+                        fontSize: 18,
+                    },
+                    top: '2%',
+                    left: 'center',
+                },
+                tooltip: {
+                    trigger: 'axis',
+                    formatter: function() {
+                        return "hahaha";
+                    }
+                },
+                grid: {
+                    top: '15%',
+                    left: '5%',
+                    right: '5%',
+                    bottom: '5%',
+                    containLabel: true
+                },
+                xAxis: [{
+                    type: 'category',
+                    axisLine: {
+                        show: true
+                    },
+                    splitArea: {
+                        // show: true,
+                        color: '#f00',
+                        lineStyle: {
+                            color: '#f00'
+                        },
+                    },
+                    axisLabel: {
+                        color: '#fff'
+                    },
+                    splitLine: {
+                        show: false
+                    },
+                    boundaryGap: false,
+                    data: this.bottomCard.dateList,
+
+                }],
+
+                yAxis: [{
+                    type: 'value',
+                    min: 0,
+                    // max: 140,
+                    splitNumber: 4,
+                    splitLine: {
+                        show: true,
+                        lineStyle: {
+                            color: 'rgba(255,255,255,0.1)'
+                        }
+                    },
+                    axisLine: {
+                        show: false,
+                    },
+                    axisLabel: {
+                        show: false,
+                        margin: 20,
+                        textStyle: {
+                            color: '#d1e6eb',
+
+                        },
+                    },
+                    axisTick: {
+                        show: false,
+                    },
+                }],
+                series: {
+                    name: '复工指数',
+                    type: 'line',
+                    showAllSymbol: false,
+                    symbol: 'circle',
+                    symbolSize: 5,
+                    lineStyle: {
+                        normal: {
+                            color: "#6c50f3",
+                            shadowColor: 'rgba(0, 0, 0, .3)',
+                            shadowBlur: 0,
+                            shadowOffsetY: 5,
+                            shadowOffsetX: 5,
+                        },
+                    },
+                    label: {
+                        show: true,
+                        position: 'top',
+                        textStyle: {
+                            color: '#fff',
+                        }
+                    },
+                    itemStyle: {
+                        color: "#6c50f3",
+                        borderColor: "#fff",
+                        borderWidth: 3,
+                        shadowColor: 'rgba(0, 0, 0, .3)',
+                        shadowBlur: 0,
+                        shadowOffsetY: 2,
+                        shadowOffsetX: 2,
+                    },
+                    tooltip: {
+                        show: false
+                    },
+                    areaStyle: {
+                        normal: {
+                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                                    offset: 0,
+                                    color: 'rgba(108,80,243,0.3)'
+                                },
+                                {
+                                    offset: 1,
+                                    color: 'rgba(108,80,243,0)'
+                                }
+                            ], false),
+                            shadowColor: 'rgba(108,80,243, 0.9)',
+                            shadowBlur: 20
+                        }
+                    },
+                    data: this.bottomCard.value,
+                },
+            };
+
+
+            let myBottomCard = echarts.init(this.$refs.inverse_card_bottom);
+            myBottomCard.setOption(option);
+            this.myBottomCard = myBottomCard;
         },
         transformData(dict) {
             let key_list = [];
@@ -257,8 +415,11 @@ export default {
                 value_list: value_list,
             }
         },
-        // 显示底部图表
-
+        // 显示侧边图表
+        showCard() {
+            this.show_side_card = this.show_side_card ? false : true;
+            this.show_bottom_card = this.show_bottom_card ? false : true;
+        },
         // 返回侧边图表option
         side_card_option(data) {
             let myColor = ['#eb2100', '#eb3600', '#d0570e', '#d0a00e', '#34da62', '#00e9db', '#00c0e9', '#0096f3', '#33CCFF', '#33FFCC'];
@@ -269,7 +430,7 @@ export default {
                     y: 10,
                     textStyle: {
                         color: "#fff",
-                        fontSize: 14,
+                        fontSize: 18,
                     }
                 },
                 // backgroundColor: '#0e2147',
@@ -328,7 +489,7 @@ export default {
             let option = {
                 title: {
                     text: data.name,
-                    subtext: 'BUAA BIGSCITY Research',
+                    subtext: '北京航空航天大学智慧城市课题组',
                     sublink: 'http://www.bigscity.com',
                     x: "center",
                     left: "left",
@@ -368,7 +529,7 @@ export default {
                             fontSize: 18
                         },
                         itemStyle: {
-                            areaColor: '#eee',
+                            areaColor: '#888',
                         },
                     },
                 },
@@ -398,6 +559,7 @@ export default {
         margin: 0px;
     }
     #mapbox {
+        position: absolute;
         height: calc(100% - 1px);
         width: calc(100% - 1px);
         padding: 0px;
@@ -405,16 +567,19 @@ export default {
     }
     #inverse_card_left {
         position: absolute;
-        width: 400px;
-        height: 500px;
+        width: 350px;
+        height: 380px;
         background-color: rgba(0, 0, 0, 0.3);
         top: 100px;
         left: 10px;
+        min-width: 350px;
+        max-width: 350px;
+        z-index: 100;
     }
     #inverse_card_right {
         position: absolute;
-        width: 400px;
-        height: 500px;
+        width: 350px;
+        height: 380px;
         background-color: rgba(0, 0, 0, 0.3);
         top: 100px;
         right: 10px;
@@ -433,5 +598,12 @@ export default {
         height: 50px;
         right: 10px;
         bottom: 10px;
+    }
+    #show_button {
+        position: absolute;
+        width: 100px;
+        height: 50px;
+        right: 10px;
+        top: 10px;
     }
 </style>

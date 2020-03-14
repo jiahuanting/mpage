@@ -28,7 +28,7 @@ const zh = {
     title: "全国疫情分析与预测地图",
     nav1: "中国疫情地图",
     nav2: "世界疫情地图",
-    nav3: "复工情况",
+    nav3: "复工复产地图",
     nav4: "疫情风险预测",
     legendText: "累计确诊病例",
     tooltip: "确诊患者数",
@@ -129,7 +129,7 @@ export default {
             let option = {
                 title: {
                     text:lang.title,
-                    subtext: 'BUAA BIGSCITY Research',
+                    subtext: '北京航空航天大学智慧城市课题组',
                     sublink: 'http://www.bigscity.com',
                     x: "center",
                     left: 'left',
@@ -171,7 +171,7 @@ export default {
                             {gt: 100, lte: 500},
                             {gt: 50, lte: 100},
                             {gte: 10, lte: 50},
-                            {lte: 10, label: lang.legendText+' < 10'},
+                            {lte: 10, label: ' < 10'},
                         ],
                         color: ['#d94e5d','#eac736','#50a3ba'],
                         left: 'right',

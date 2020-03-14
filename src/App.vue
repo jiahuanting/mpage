@@ -21,13 +21,6 @@
         {{ zh_en.nav3 }}
       </MenuItem>
       </router-link>
-        
-      <router-link to="/risk">
-      <MenuItem name="4">
-          <!-- <Icon type="ios-construct" />想 -->
-          {{ zh_en.nav4 }}
-      </MenuItem>
-      </router-link>
      
       <MenuItem name="5" style="float: right;">
         <ButtonGroup :size="buttonSize">
@@ -49,7 +42,7 @@ const zh = {
     title: "COVID-19全球疫情分析与预测地图",
     nav1: "中国疫情地图",
     nav2: "世界疫情地图",
-    nav3: "复工情况",
+    nav3: "复工复产地图",
     nav4: "疫情风险预测",
 };
 const en = {
@@ -65,7 +58,7 @@ export default {
         return {
             theme: 'light',
             buttonSize: 'large',
-            zh_en: en,
+            zh_en: zh,
         }
     },
     computed: {
@@ -88,7 +81,7 @@ export default {
                     title: "Global COVID-19 Epidemic Evaluation and Prediction Map",
                     nav1: "China Epidemic Map",
                     nav2: "World Epidemic Map",
-                    nav3: "Work Resumption",
+                    nav3: "Labor Resumption",
                     nav4: "Epidemic Risk Forecast",
                 };
             }

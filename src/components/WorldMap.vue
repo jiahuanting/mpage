@@ -30,7 +30,7 @@ const zh = {
     title: "COVID-19全球疫情分析与预测地图",
     nav1: "中国疫情地图",
     nav2: "世界疫情地图",
-    nav3: "复工情况",
+    nav3: "复工复产地图",
     nav4: "疫情风险预测",
     legendText: "累计确诊病例",
     tooltip: "确诊患者数",
@@ -125,7 +125,7 @@ export default {
             let option = {
                 title: {
                     text: lang.title,
-                    subtext: 'BUAA BIGSCITY Research',
+                    subtext: '北京航空航天大学智慧城市课题组',
                     sublink: 'http://www.bigscity.com',
                     x: "center",
                     left: 'left',
@@ -200,7 +200,7 @@ export default {
                     type: 'piecewise',
                     show: true,
                     pieces: [
-                        {gt: 5000, label: lang.legendText  + ' > 5000'},  
+                        {gt: 5000, label: ' > 5000'},  
                         {gt: 1000, lte: 5000},        
                         {gt: 500, lte: 1000},
                         {gt: 100, lte: 500},
