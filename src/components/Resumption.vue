@@ -46,6 +46,7 @@ const zh = {
     cardTitle1: "GDP加权复工指数Top10",
     cardTitle2: "GDP加权缺工指数Top10",
     cardTitle3: "全国GDP加权复工指数",
+    cardTitle4: "全国GDP加权缺工指数",
     buttonText1: "复工指数",
     buttonText2: "缺工指数",
     buttonText3: "隐藏图表",
@@ -68,7 +69,8 @@ const en = {
     tooltip5: "Recovery index",
     cardTitle1: "GDP-Weighted Resumption Index",
     cardTitle2: "GDP-Weighted Shortage Index",
-    cardTitle3: "GDP-Weighted National Resumption Index",
+    cardTitle3: "GDP-Weighted National Work Resumption Index",
+    cardTitle4: "GDP-Weighted National Labor Shortage Index",
     buttonText1: "Resumption Index",
     buttonText2: "Shortage Index",
     buttonText3: "Hide Charts",
@@ -85,7 +87,7 @@ export default {
             en: en,
             zh: zh,
             show_side_card: false,
-            show_bottom_card: true,
+            show_bottom_card: false,
             viewType: "resumption",
             buttonSize: "large",
             current_city: {},
@@ -98,9 +100,9 @@ export default {
     },
     watch: {
         zh_en_signal: function(val, oldval) {
-            this.initMap();
+            this.switchMap(this.viewType);
             this.initSideCard();
-            this.initBottomCard();
+            this.switchBottomCard(this.viewType);
         }
     },
     mounted() {
@@ -112,47 +114,30 @@ export default {
                 echarts.registerMap("china-cities", resp.data);
                 this.$axios.get("../../static/resumption.json").then((resp)=>{
                     // 复工缺工指数数据在返回数据的"data"里
-                    this.resumption_data = resp.data.data.map((item)=>{
-                        return {
-                            name: item.name,
-                            value: item.work_resumption_2020,
-                            values: {
-                                work_resumption_2019: item.work_resumption_2019,
-                                work_resumption_2020: item.work_resumption_2020,
-                                ratio: item.ratio,
-                                move_in_last_7_days: item.move_in_last_7_days,
-                                move_out_last_7_days: item.move_out_last_7_days
-                            }
-                        }
-                    });
-                    this.lack_data = resp.data.data.map((item)=>{
-                        return {
-                            name: item.name,
-                            value: item.lack_of_work_2020,
-                            values: {
-                                lack_of_work_2019: item.lack_of_work_2019,
-                                lack_of_work_2020: item.lack_of_work_2020,
-                            }
-                        }
-                    });
-                    // 年后净流入指数排名前十和净流出前十的城市
+                    this.fugong = resp.data.fugong;
+                    this.quegong = resp.data.quegong;
                     this.GDPWeightedResumption = resp.data.GDPWeightedResumption;
                     this.GDPWeightedShortage = resp.data.GDPWeightedShortage;
-                    this.bottomCard = resp.data.bottomCard;
+                    this.bottomCard_fugong = resp.data.bottomCard_fugong;
+                    this.bottomCard_quegong = resp.data.bottomCard_quegong;
                     const myChart = echarts.init(this.$refs.mapbox);
                     this.myChart = myChart;
                     this.switchMap("resumption");
                     this.initSideCard();
-                    this.initBottomCard();
+                    this.switchBottomCard("resumption");
                 })
             })
 
         },
         switchResumption() {
+            this.viewType = "resumption";
             this.switchMap("resumption");
+            this.switchBottomCard("resumption");
         },
         switchLack() {
+            this.viewType = "lack";
             this.switchMap("lack");
+            this.switchBottomCard("lack");
         },
         // 先为地图去掉绑定的点击事件再重新设定
         // this.myChart.off("click");
@@ -169,7 +154,7 @@ export default {
                     name: lang.title1,
                     formatter: function(params) {
                         if (params.data) {
-                            return params.name + "<br>" + lang.tooltip1 + " : " + params.data.values.work_resumption_2019 + "<br>" + lang.tooltip2 + " : " + params.data.values.work_resumption_2020 + "<br>" + lang.tooltip5 + " : " + params.data.values.ratio;
+                            return params.name + "<br>" + lang.tooltip2 + " : " + params.value;
                         }
                     },
                     visualMap: {
@@ -184,7 +169,7 @@ export default {
                             color: '#fff'
                         },
                     },  
-                    data: this.resumption_data,
+                    data: this.fugong,
                 };
                 this.myChart.clear();
                 this.myChart.setOption(this.base_option(data_resumption));
@@ -194,30 +179,23 @@ export default {
                     name: lang.title2,
                     formatter: function(params) {
                         if (params.data) {
-                            return params.name + "<br>" + lang.tooltip3 + " : " + params.data.values.lack_of_work_2019 + "<br>" + lang.tooltip4 + " : " + params.data.values.lack_of_work_2020;
+                            return params.name + "<br>" + lang.tooltip3 + " : " + params.value;
                         }
                     },
                     visualMap: {
-                        type: 'piecewise',
-                        show: true,
-                        pieces: [
-                            {gt: 50, label: ' > 50'},          
-                            {gt: 10, lte: 50},
-                            {gt: 3, lte: 10},
-                            {gt: 1, lte: 3},
-                            {gte: 0.1, lte: 1},
-                            {lte: 0.1, label: ' < 0.1'},
-                        ],
+                        min: 0,
+                        max: 100,
+                        calculable: false, //是否显示拖拽用的手柄（手柄能拖拽调整选中范围）。
+                        inRange: {
+                            color: ['#50a3ba','#d94e5d','#eac736'], //颜色
+                        },
                         left: 'left',
-                        color: ['#d94e5d','#eac736','#50a3ba'],
                         textStyle: {
-                            fontSize: 18,
-                            fontWeight: 'bold',
-                            color: '#fff',
+                            color: '#fff'
                         },
                         seriesIndex:0,
                     },
-                    data: this.lack_data,
+                    data: this.quegong,
                 }
                 this.myChart.clear();
                 this.myChart.setOption(this.base_option(data_lack));
@@ -264,17 +242,27 @@ export default {
             this.myLeftCard = myLeftCard;
             this.myRightCard = myRightCard;
         },
-        initBottomCard() {
+        switchBottomCard(map_name) {
             let lang = {};
             if(this.$store.state.zh_en === "zh") {
                 lang = this.zh;
             } else {
                 lang = this.en;
             }
+            let opt = {};
+            if(map_name == "resumption") {
+                opt.title = lang.cardTitle3;
+                opt.xAxis = this.bottomCard_fugong.dateList;
+                opt.value = this.bottomCard_fugong.value;
+            } else {
+                opt.title = lang.cardTitle4;
+                opt.xAxis = this.bottomCard_quegong.dateList;
+                opt.value = this.bottomCard_quegong.value;
+            }
             let option = {
                 // backgroundColor: '#080b30',
                 title: {
-                    text: lang.cardTitle3,
+                    text: opt.title,
                     textStyle: {
                         align: 'center',
                         color: '#fff',
@@ -282,12 +270,6 @@ export default {
                     },
                     top: '2%',
                     left: 'center',
-                },
-                tooltip: {
-                    trigger: 'axis',
-                    formatter: function() {
-                        return "hahaha";
-                    }
                 },
                 grid: {
                     top: '15%',
@@ -315,8 +297,7 @@ export default {
                         show: false
                     },
                     boundaryGap: false,
-                    data: this.bottomCard.dateList,
-
+                    data: opt.xAxis,
                 }],
 
                 yAxis: [{
@@ -346,7 +327,7 @@ export default {
                     },
                 }],
                 series: {
-                    name: '复工指数',
+                    name: opt.name,
                     type: 'line',
                     showAllSymbol: false,
                     symbol: 'circle',
@@ -394,11 +375,10 @@ export default {
                             shadowBlur: 20
                         }
                     },
-                    data: this.bottomCard.value,
+                    data: opt.value,
                 },
             };
-
-
+            this.show_bottom_card = true;
             let myBottomCard = echarts.init(this.$refs.inverse_card_bottom);
             myBottomCard.setOption(option);
             this.myBottomCard = myBottomCard;
@@ -487,59 +467,126 @@ export default {
         },
         base_option(data) {
             let option = {
-                title: {
-                    text: data.name,
-                    subtext: '北京航空航天大学智慧城市课题组',
-                    sublink: 'http://www.bigscity.com',
-                    x: "center",
-                    left: "left",
-                    textStyle: {
-                        fontSize: 30,
-                        color: '#fff',
-                    },
-                    top: '20px'
-                },
-                backgroundColor: "rgb(11, 53, 102)", //背景颜色
-                tooltip: {
-                    formatter: data.formatter,
-                },
-                visualMap: [ data.visualMap ],
-                geo: {
-                    map: "china-cities",
-                    roam: true,
-                    scaleLimit: {
-                        min: 1,
-                        max: 10,
-                    },
-                    zoom: 1.2,
+                timeline: {
+                    data: [],
+                    axisType: 'category',
+                    autoPlay: true,
+                    playInterval: 2000,
+                    left: '20%',
+                    right: '20%',
+                    top: '3%',
+                    width: '60%',
                     label: {
                         normal: {
-                            show: false,
-                            fontSize: 10,
-                            color: "black",
+                            textStyle: {
+                                color: '#fff'
+                            }
                         },
+                        emphasis: {
+                            textStyle: {
+                                color: '#fff'
+                            }
+                        }
                     },
-                    background: "#aaa",
-                    // show: false,
-                    emphasis: {
-                        label: {
-                            //控制对应地区的汉字
-                            show: true,
-                            color: '#fff',
-                            fontSize: 18
+                    symbolSize: 10,
+                    lineStyle: {
+                        color: '#fff'
+                    },
+                    checkpointStyle: {
+                        borderColor: '#777',
+                        borderWidth: 2
+                    },
+                    controlStyle: {
+                        showNextBtn: true,
+                        showPrevBtn: true,
+                        normal: {
+                            color: '#666',
+                            borderColor: '#666'
                         },
-                        itemStyle: {
-                            areaColor: '#888',
+                        emphasis: {
+                            color: '#aaa',
+                            borderColor: '#aaa'
+                        }
+                    },
+
+                },
+                baseOption: {
+                    animation: true,
+                    animationDuration: 1000,
+                    animationEasing: 'cubicInOut',
+                    animationDurationUpdate: 1000,
+                    animationEasingUpdate: 'cubicInOut',
+                    tooltip: {
+                        formatter: data.formatter,
+                    },
+                    geo: {
+                        map: "china-cities",
+                        roam: true,
+                        scaleLimit: {
+                            min: 1,
+                            max: 10,
+                        },
+                        zoom: 1.0,
+                        label: {
+                            normal: {
+                                show: false,
+                                fontSize: 10,
+                                color: "black",
+                            },
+                        },
+                        background: "#aaa",
+                        emphasis: {
+                            label: {
+                                //控制对应地区的汉字
+                                show: true,
+                                color: '#fff',
+                                fontSize: 18
+                            },
+                            itemStyle: {
+                                areaColor: '#888',
+                            },
                         },
                     },
                 },
-                series: {
-                    name: "复工率",
-                    type: "map",
-                    geoIndex: 0,
-                    data: data.data,
-                }
+                options: []
             };
+            let dateList = [];
+            let cityList = data.data.city;
+            for(let i = 0; i < data.data.data.length; i++) {
+                let temp = data.data.data[i].value;
+                dateList.push(data.data.data[i].date);
+                let daily = [];
+                for(let i = 0; i < temp.length; i++) {
+                    daily.push({
+                        name: cityList[i],
+                        value: temp[i]
+                    })
+                }
+                option.options.push({
+                    title: {
+                        text: data.name,
+                        subtext: '北京航空航天大学智慧城市课题组',
+                        sublink: 'http://www.bigscity.com',
+                        x: "center",
+                        left: "left",
+                        textStyle: {
+                            fontSize: 30,
+                            color: '#fff',
+                        },
+                        top: '20px'
+                    },
+                    backgroundColor: "rgb(11, 53, 102)", //背景颜色
+                    visualMap: [ data.visualMap ],
+                    
+                    series: {
+                        name: "复工率",
+                        type: "map",
+                        geoIndex: 0,
+                        data: daily,
+                    }
+                });
+            }
+            option.timeline.data = dateList;
             return option;
         },// base_option
     }
@@ -589,14 +636,14 @@ export default {
         width: 800px;
         height: 200px;
         background-color: rgba(0, 0, 0, 0.3);
-        bottom: 20px;
+        bottom: 10px;
         left: calc(50% - 400px);
     }
     #select_button {
         position: absolute;
         width: 600px;
         height: 50px;
-        right: 3%;
+        right: 1%;
         bottom: 1%;
     }
     #show_button {
