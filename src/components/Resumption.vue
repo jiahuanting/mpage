@@ -5,10 +5,10 @@
         <div id="inverse_card_left" ref="inverse_card_left" v-show="show_side_card"></div>
         <div id="inverse_card_right" ref="inverse_card_right" v-show="show_side_card"></div>
         <div id="inverse_card_bottom" ref="inverse_card_bottom" v-show="show_bottom_card"></div>
-        <div id="show_button" ref="show_button"> 
+        <div id="show_button" ref="show_button">
             <Button :size="buttonSize" type="primary" @click="showCard">
                 {{ this.show_side_card ? this.$store.state.zh_en === "zh" ? zh.buttonText3 : en.buttonText3 : this.$store.state.zh_en === "zh" ? zh.buttonText4 : en.buttonText4 }}
-                
+
             </Button>
         </div>
         <div id="select_button" ref="select_button">
@@ -594,16 +594,18 @@ export default {
     }
     #select_button {
         position: absolute;
-        width: 400px;
+        width: 600px;
         height: 50px;
-        right: 10px;
-        bottom: 10px;
+        right: 3%;
+        bottom: 1%;
     }
     #show_button {
         position: absolute;
         width: 100px;
-        height: 50px;
-        right: 10px;
+        /*height: 50px;*/
+        /*right: 15px;*/
+        height: 5%;
+        right: 3%;
         top: 10px;
     }
 </style>
