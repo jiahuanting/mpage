@@ -89,14 +89,11 @@ export default {
     methods: {
         initMap() {
             // 获取各国确诊病例数以及R0
-            this.$axios.get('../../static/world_data.json').then((resp)=>{
-                this.prov_data = resp.data.map((item) => {
-                    return {
-                        name: item.name,
-                        value: item.value.infect,
-                    }
-                }); 
-                let option = this.getMapOption();
+            this.$axios.get('../../static/predict.json').then((resp)=>{
+                // 确诊数据
+                this.official_confirmed = resp.data.official_confirmed;
+                this.coun_data = resp.data.predict;
+                let option = this.getMapOption(this.official_confirmed);
                 
                 const mycharts = echarts.init(this.$refs.mapbox);
                 mycharts.setOption(option);
@@ -106,11 +103,15 @@ export default {
                 });
                 this.mycharts = mycharts;
             });
+            let table_predict = echarts.init(this.$refs.predict);
+            this.myPredict = table_predict;
+            let table_remaining = echarts.init(this.$refs.remaining);
+            this.myRemaining = table_remaining;
             if(this.current_coun != "") {
                 this.activeCountry(this.current_coun);
             }
         },
-        getMapOption() {
+        getMapOption(official) {
             let lang = {};
             let signal = 0;
             if(this.$store.state.zh_en === "zh") {
@@ -119,9 +120,6 @@ export default {
             } else {
                 lang = this.en;
             }
-            // for(let key in nameMap) {
-            //     nameMap[key.toLowerCase()] = nameMap[key];
-            // }
             let option = {
                 title: {
                     text: lang.title,
@@ -194,7 +192,7 @@ export default {
                             areaColor: '#83b5e7',
                         },
                     },
-                    data: this.prov_data,
+                    data: official,
                 }],
                 visualMap: [{
                     type: 'piecewise',
@@ -220,7 +218,7 @@ export default {
             return option;
         },
         activeCountry(coun) {
-            if(!this.isInArray(coun)) {
+            if(!this.coun_data.hasOwnProperty(coun)) {
                 return;
             }
             let lang = {};
@@ -229,237 +227,205 @@ export default {
             } else {
                 lang = this.en;
             }
-            this.$axios.get("../../static/coun/"+coun+".json").then((resp)=> {
-                if(this.$store.state.zh_en === "zh") {
-                    this.current_coun = nameMap[coun];
-                } else {
-                    this.current_coun = coun;
-                }
-                if(coun === "Korea") {
-                    if(this.$store.state.zh_en === "en") {
-                        this.current_coun = "South Korea";
-                    } else {
-                        this.current_coun = "韩国";
+            this.current_coun = coun;
+            let option_predict = {
+                title: {
+                    text: lang.chartY1,
+                    x: 'left',
+                    y: 10,
+                    textStyle: {
+                        color: '#fff'
                     }
-                    
-                }
-                this.predict_cases = resp.data.data.predict.value;
-                this.actual_cases = resp.data.data.official_confirmed.value;
-                this.remaining_cases = resp.data.data.Remain_confirm.value;
-                const dateSeries1 = this.genDateArr(
-                    resp.data.data.predict.start_date, 
-                    resp.data.data.predict.end_date, 
-                    resp.data.data.predict.value
-                );
-                const dateSeries2 = this.genDateArr(
-                    resp.data.data.Remain_confirm.start_date, 
-                    resp.data.data.Remain_confirm.end_date, 
-                    resp.data.data.Remain_confirm.value
-                );
-                // 设置表格属性
-                let option_predict = {
-                    title: {
-                        text: lang.chartY1,
-                        x: 'left',
-                        y: 10,
-                        textStyle: {
-                            color: '#fff'
-                        }
-                    },
-                    tooltip: {
-                        trigger: 'axis'
-                    },
-                    legend: {
-                        data: [lang.line1, lang.line2],
-                        orient: 'horizontal',
-                        x: 'center',
-                        y: 'bottom',
-                        textStyle: {
-                            color: '#fff'
-                        }
-                    },
-                    grid:{
-                        x:50,
-                        y:50,
-                        x2:50,
-                        y2:50,
-                        borderWidth:1
-                    },
-                    toolbox: {
+                },
+                tooltip: {
+                    trigger: 'axis'
+                },
+                legend: {
+                    data: [lang.line1, lang.line2],
+                    orient: 'horizontal',
+                    x: 'center',
+                    y: 'bottom',
+                    textStyle: {
+                        color: '#fff'
+                    }
+                },
+                grid:{
+                    x:50,
+                    y:50,
+                    x2:50,
+                    y2:50,
+                    borderWidth:1
+                },
+                toolbox: {
+                    show: false,
+                    feature: {
+                        dataZoom: {
+                            yAxisIndex: 'none'
+                        },
+                        dataView: {readOnly: false},
+                        magicType: {type: ['line', 'bar', 'stack']},
+                        restore: {},
+                        saveAsImage: {}
+                    }
+                },
+                xAxis: {
+                    type: 'category',
+                    boundaryGap: false,
+                    splitLine: {
                         show: false,
-                        feature: {
-                            dataZoom: {
-                                yAxisIndex: 'none'
-                            },
-                            dataView: {readOnly: false},
-                            magicType: {type: ['line', 'bar', 'stack']},
-                            restore: {},
-                            saveAsImage: {}
+                    },
+                    data: this.coun_data[coun].predict.dateList,
+                    axisLine: {
+                        lineStyle: {
+                            type: 'solid',
+                            color:'#fff',
+                            width:'2'
                         }
                     },
-                    xAxis: {
-                        type: 'category',
-                        boundaryGap: false,
-                        splitLine: {
-                            show: false,
-                        },
-                        data: dateSeries1,
-                        axisLine: {
-                            lineStyle: {
-                                type: 'solid',
-                                color:'#fff',
-                                width:'2'
-                            }
-                        },
-                        axisLabel: {
-                            textStyle: {
-                                color: '#fff', //坐标轴的具体的颜色
-                            }
-                        },
-                    },
-                    yAxis: {
-                        type: 'value',
-                        show: true,
-                        scale: true,
-                        splitLine: {
-                            show: false,
-                        },
-                        axisLine: {
-                            lineStyle: {
-                                type: 'solid',
-                                color:'#fff',
-                                width:'2'
-                            }
-                        },
-                        axisLabel: {
-                            textStyle: {
-                                color: '#fff', //坐标轴的具体的颜色
-                            }
-                        },
-                    },
-                    series: [
-                        {
-                            name: lang.line1,
-                            type: 'line',
-                            data: this.predict_cases,
-                            markPoint: {
-                                data: [
-                                    {type: 'max', name: '最大值'},
-                                    {type: 'min', name: '最小值'}
-                                ]
-                            },
-                        },
-                        {
-                            name: lang.line2,
-                            type: 'line',
-                            data: this.actual_cases,
-                            markPoint: {
-                                data: [
-                                    {name: '周最低', value: -2, xAxis: 1, yAxis: -1.5}
-                                ]
-                            },
-                        },
-                    ]
-                };
-                let option_remaining = {
-                    title: {
-                        text: lang.chartY2,
-                        x: 'left',
-                        y: 10,
+                    axisLabel: {
                         textStyle: {
-                            color: '#fff'
+                            color: '#fff', //坐标轴的具体的颜色
                         }
                     },
-                    tooltip: {
-                        trigger: 'axis'
-                    },
-                    legend: {
-                        data: [lang.chartY2],
-                        orient: 'horizontal',
-                        x: 'center',
-                        y: 'bottom',
-                        textStyle: {
-                            color: '#fff'
-                        }
-                    },
-                    grid:{
-                        x:50,
-                        y:50,
-                        x2:50,
-                        y2:50,
-                        borderWidth:1
-                    },
-                    toolbox: {
+                },
+                yAxis: {
+                    type: 'value',
+                    show: true,
+                    scale: true,
+                    splitLine: {
                         show: false,
-                        feature: {
-                            dataZoom: {
-                                yAxisIndex: 'none'
-                            },
-                            dataView: {readOnly: false},
-                            magicType: {type: ['line']},
-                            restore: {},
-                            saveAsImage: {}
+                    },
+                    axisLine: {
+                        lineStyle: {
+                            type: 'solid',
+                            color:'#fff',
+                            width:'2'
                         }
                     },
-                    xAxis: {
-                        type: 'category',
-                        boundaryGap: false,
-                        data: dateSeries2,
-                        axisLine: {
-                            lineStyle: {
-                                type: 'solid',
-                                color:'#fff',
-                                width:'2'
-                            }
-                        },
-                        axisLabel: {
-                            textStyle: {
-                                color: '#fff', //坐标轴的具体的颜色
-                            }
+                    axisLabel: {
+                        textStyle: {
+                            color: '#fff', //坐标轴的具体的颜色
+                        }
+                    },
+                },
+                series: [
+                    {
+                        name: lang.line1,
+                        type: 'line',
+                        data: this.coun_data[coun].predict.value,
+                        markPoint: {
+                            data: [
+                                {type: 'max', name: '最大值'},
+                                {type: 'min', name: '最小值'}
+                            ]
                         },
                     },
-                    yAxis: {
-                        type: 'value',
-                        show: true,
-                        scale: true,
-                        splitLine: {
-                            show: false,
-                        },
-                        axisLine: {
-                            lineStyle: {
-                                type: 'solid',
-                                color:'#fff',
-                                width:'2'
-                            }
-                        },
-                        axisLabel: {
-                            textStyle: {
-                                color: '#fff', //坐标轴的具体的颜色
-                            }
+                    {
+                        name: lang.line2,
+                        type: 'line',
+                        data: this.coun_data[coun].actual.value,
+                        markPoint: {
+                            data: [
+                                {name: '周最低', value: -2, xAxis: 1, yAxis: -1.5}
+                            ]
                         },
                     },
-                    series: [
-                        {
-                            name: lang.chartY2,
-                            type: 'line',
-                            data: this.remaining_cases,
-                            markPoint: {
-                                data: [
-                                    {type: 'max'},
-                                    {type: 'min'}
-                                ]
-                            },
+                ]
+            };
+            let option_remaining = {
+                title: {
+                    text: lang.chartY2,
+                    x: 'left',
+                    y: 10,
+                    textStyle: {
+                        color: '#fff'
+                    }
+                },
+                tooltip: {
+                    trigger: 'axis'
+                },
+                legend: {
+                    data: [lang.chartY2],
+                    orient: 'horizontal',
+                    x: 'center',
+                    y: 'bottom',
+                    textStyle: {
+                        color: '#fff'
+                    }
+                },
+                grid:{
+                    x:50,
+                    y:50,
+                    x2:50,
+                    y2:50,
+                    borderWidth:1
+                },
+                toolbox: {
+                    show: false,
+                    feature: {
+                        dataZoom: {
+                            yAxisIndex: 'none'
                         },
-                    ]
-                };
-                let table_predict = echarts.init(this.$refs.predict);
-                table_predict.setOption(option_predict);
-                let table_remaining = echarts.init(this.$refs.remaining);
-                table_remaining.setOption(option_remaining);
-                this.show_hide = true;
-            }).catch(()=>{
-                return;
-            });
+                        dataView: {readOnly: false},
+                        magicType: {type: ['line']},
+                        restore: {},
+                        saveAsImage: {}
+                    }
+                },
+                xAxis: {
+                    type: 'category',
+                    boundaryGap: false,
+                    data: this.coun_data[coun].predict.dateList,
+                    axisLine: {
+                        lineStyle: {
+                            type: 'solid',
+                            color:'#fff',
+                            width:'2'
+                        }
+                    },
+                    axisLabel: {
+                        textStyle: {
+                            color: '#fff', //坐标轴的具体的颜色
+                        }
+                    },
+                },
+                yAxis: {
+                    type: 'value',
+                    show: true,
+                    scale: true,
+                    splitLine: {
+                        show: false,
+                    },
+                    axisLine: {
+                        lineStyle: {
+                            type: 'solid',
+                            color:'#fff',
+                            width:'2'
+                        }
+                    },
+                    axisLabel: {
+                        textStyle: {
+                            color: '#fff', //坐标轴的具体的颜色
+                        }
+                    },
+                },
+                series: [
+                    {
+                        name: lang.chartY2,
+                        type: 'line',
+                        data: this.coun_data[coun].remain.value,
+                        markPoint: {
+                            data: [
+                                {type: 'max'},
+                                {type: 'min'}
+                            ]
+                        },
+                    },
+                ]
+            };
+            this.myPredict.setOption(option_predict);
+            this.myRemaining.setOption(option_remaining);
+            this.show_hide = true;
         },
         genDateArr(start, end, arr) {
             const startDate = +new Date(start);

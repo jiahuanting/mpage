@@ -43,8 +43,8 @@ const zh = {
     tooltip3: "2019 缺工指数",
     tooltip4: "2020 缺工指数",
     tooltip5: "恢复指数",
-    cardTitle1: "GDP加权复工指数Top10",
-    cardTitle2: "GDP加权缺工指数Top10",
+    cardTitle1: "年后人口流入城市Top10",
+    cardTitle2: "年后人口流出城市Top10",
     cardTitle3: "全国GDP加权复工指数",
     cardTitle4: "全国GDP加权缺工指数",
     buttonText1: "复工指数",
@@ -67,8 +67,8 @@ const en = {
     tooltip3: "2019 Shortage Index",
     tooltip4: "2020 Shortage Index",
     tooltip5: "Recovery index",
-    cardTitle1: "GDP-Weighted Resumption Index",
-    cardTitle2: "GDP-Weighted Shortage Index",
+    cardTitle1: "Population Inflow Ranking",
+    cardTitle2: "Population Outflow Ranking",
     cardTitle3: "GDP-Weighted National Work Resumption Index",
     cardTitle4: "GDP-Weighted National Labor Shortage Index",
     buttonText1: "Resumption Index",
@@ -112,14 +112,13 @@ export default {
         initMap() {
             this.$axios.get("../../static/map/china-cities.json").then((resp)=>{
                 echarts.registerMap("china-cities", resp.data);
-                this.$axios.get("../../static/resumption.json").then((resp)=>{
+                this.$axios.get("../../static/dataR.json").then((resp)=>{
                     // 复工缺工指数数据在返回数据的"data"里
-                    this.fugong = resp.data.fugong;
-                    this.quegong = resp.data.quegong;
-                    this.GDPWeightedResumption = resp.data.GDPWeightedResumption;
-                    this.GDPWeightedShortage = resp.data.GDPWeightedShortage;
-                    this.bottomCard_fugong = resp.data.bottomCard_fugong;
-                    this.bottomCard_quegong = resp.data.bottomCard_quegong;
+                    this.fugong = resp.data.fugong_daily;
+                    this.quegong = resp.data.quegong_daily;
+                    this.fugong_bottomCard = resp.data.fugong_bottomCard;
+                    this.quegong_bottomCard = resp.data.quegong_bottomCard;
+                    this.sideCard = resp.data.sideCard;
                     const myChart = echarts.init(this.$refs.mapbox);
                     this.myChart = myChart;
                     this.switchMap("resumption");
@@ -184,10 +183,10 @@ export default {
                     },
                     visualMap: {
                         min: 0,
-                        max: 100,
+                        max: 1,
                         calculable: false, //是否显示拖拽用的手柄（手柄能拖拽调整选中范围）。
                         inRange: {
-                            color: ['#50a3ba','#d94e5d','#eac736'], //颜色
+                            color: ['#00FF33','#d94e5d'], //颜色
                         },
                         left: 'left',
                         textStyle: {
@@ -210,7 +209,7 @@ export default {
             }
             let cities_left = [];
             let values_left = [];
-            this.GDPWeightedResumption.forEach((item)=>{
+            this.sideCard.in.forEach((item)=>{
                 cities_left.push(item.city);
                 values_left.push(item.value);
             });
@@ -223,7 +222,7 @@ export default {
 
             let cities_right = [];
             let values_right = [];
-            this.GDPWeightedShortage.forEach((item)=>{
+            this.sideCard.out.forEach((item)=>{
                 cities_right.push(item.city);
                 values_right.push(item.value);
             })
@@ -252,12 +251,12 @@ export default {
             let opt = {};
             if(map_name == "resumption") {
                 opt.title = lang.cardTitle3;
-                opt.xAxis = this.bottomCard_fugong.dateList;
-                opt.value = this.bottomCard_fugong.value;
+                opt.xAxis = this.fugong_bottomCard.dateList;
+                opt.value = this.fugong_bottomCard.value;
             } else {
                 opt.title = lang.cardTitle4;
-                opt.xAxis = this.bottomCard_quegong.dateList;
-                opt.value = this.bottomCard_quegong.value;
+                opt.xAxis = this.quegong_bottomCard.dateList;
+                opt.value = this.quegong_bottomCard.value;
             }
             let option = {
                 // backgroundColor: '#080b30',
@@ -470,8 +469,8 @@ export default {
                 timeline: {
                     data: [],
                     axisType: 'category',
-                    autoPlay: true,
-                    playInterval: 2000,
+                    autoPlay: false,
+                    playInterval: 1500,
                     left: '20%',
                     right: '20%',
                     top: '3%',
@@ -587,6 +586,7 @@ export default {
                 });
             }
             option.timeline.data = dateList;
+            option.timeline.currentIndex = dateList.length-1;
             return option;
         },// base_option
     }
