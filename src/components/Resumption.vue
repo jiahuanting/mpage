@@ -485,7 +485,13 @@ export default {
                             textStyle: {
                                 color: '#fff'
                             }
-                        }
+                        },
+                    },
+                    tooltip: {
+                        formatter: function(params) {
+                            return params.name;
+                        },
+                        show: true,
                     },
                     symbolSize: 10,
                     lineStyle: {
