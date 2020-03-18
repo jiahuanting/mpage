@@ -2,7 +2,14 @@
     <div id="content" ref="content">
     <!--初始化Echarts-->
         <div id="mapbox" ref="mapbox"></div>
-        <div id="inverse_card_left" ref="inverse_card_left" v-show="show_side_card"></div>
+        <div id="inverse_card_left_package" ref="inverse_card_left_package">
+            <div id="inverse_card_left" ref="inverse_card_left" v-show="show_side_card"></div>
+            <div id="statement" ref="statement">
+                <p>
+                    {{ this.$store.state.zh_en === "zh" ? zh.statement : en.statement }}
+                </p>
+            </div>
+        </div>
         <div id="inverse_card_right" ref="inverse_card_right" v-show="show_side_card"></div>
         <div id="inverse_card_bottom" ref="inverse_card_bottom" v-show="show_bottom_card"></div>
         <div id="show_button" ref="show_button">
@@ -51,7 +58,7 @@ const zh = {
     buttonText2: "缺工指数",
     buttonText3: "隐藏图表",
     buttonText4: "显示图表",
-    statement: "注：本网站由北京航空航天大学计算机学院智慧城市(BIGSCity)课题组完成，受到国家重点研发计划项目\"城市多样化场景模式挖掘与态势认知(2019YFB2102103)\"支持。",
+    statement: "数据来自百度迁徙大数据 http://qianxi.baidu.com/",
 };
 const en = {
     title1: "China Map of Labor Resumption",
@@ -75,7 +82,7 @@ const en = {
     buttonText2: "Shortage Index",
     buttonText3: "Hide Charts",
     buttonText4: "Show Charts",
-    statement: "This website is developed by BIGSCity research group, School of Computer Science, Beihang University, and supported by the National Key Research and Development Program \" Pattern Mining and Situation Recognition of Urban Diversified Scenes (2019YFB2102103)\"",
+    statement: "Data from Baidu Migration. http://qianxi.baidu.com/",
 };
 
 
@@ -618,15 +625,22 @@ export default {
         padding: 0px;
         margin: 0px;
     }
+    #inverse_card_left_package {
+        position: absolute;
+        width: 350px;
+        height: 380px;
+        background-color: rgba(0, 0, 0, 0);
+        top: 100px;
+        left: 10px;
+        z-index: 100;
+    }
     #inverse_card_left {
         position: absolute;
         width: 350px;
         height: 380px;
         background-color: rgba(0, 0, 0, 0.3);
-        top: 100px;
-        left: 10px;
-        min-width: 350px;
-        max-width: 350px;
+        top: 0px;
+        left: 0px;
         z-index: 100;
     }
     #inverse_card_right {
@@ -660,5 +674,12 @@ export default {
         height: 5%;
         right: 3%;
         top: 10px;
+    }
+    #statement {
+        position: absolute;
+        left: 5%;
+        bottom: 5px;
+        width: 100%;
+        color: #fff;
     }
 </style>
