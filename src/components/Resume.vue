@@ -11,12 +11,6 @@ export default {
 </script>
 
 <style scoped>
-    html, body, div {
-        padding: 0px;
-        margin: 0px;
-        width: 100%;
-        height: 100%;
-    }
     #show-iframe {
         position: absolute;
         height: 100%;
