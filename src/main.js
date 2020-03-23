@@ -2,18 +2,10 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
 import App from './App'
-import router from './router'
-import iView from 'iview';
-import 'iview/dist/styles/iview.css';
-import axios from 'axios';
-import Vuex from 'vuex';
-import store from './store/store';
+import router from './router';
 
 
 Vue.config.productionTip = false
-Vue.use(iView);
-Vue.prototype.$axios = axios;
-Vue.use(Vuex);
 
 router.beforeEach((to, from, next) => {
   /* 路由发生变化修改页面title */
@@ -27,7 +19,6 @@ router.beforeEach((to, from, next) => {
 new Vue({
   el: '#app',
   router,
-  store,
   components: { App },
   template: '<App/>'
 })

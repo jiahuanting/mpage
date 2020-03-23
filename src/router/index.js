@@ -1,36 +1,27 @@
-import Vue from 'vue'
-import Router from 'vue-router'
-import ChinaMap from '@/components/ChinaMap';
-import WorldMap from '@/components/WorldMap';
-import Resumption from '@/components/Resumption';
-import Risk from '@/components/Risk';
+import Vue from 'vue';
+import Router from 'vue-router';
+import Resume from '@/components/Resume';
+import World from '@/components/World';
 
-Vue.use(Router)
+Vue.use(Router);
 
 export default new Router({
   routes: [
     {
       path: '/',
-      name: 'ChinaMap',
-      component: ChinaMap,
+      name: 'Resume',
+      component: Resume,
       meta: {
-        title: "新型冠状病毒疫情分析与预测地图",
+        title: "中国复工复产地图",
       }
     },
     {
-      path: '/worldmap',
-      name: 'WorldMap',
-      component: WorldMap
-    },
-    {
-      path: '/resumption',
-      name: 'Resumption',
-      component: Resumption
-    },
-    {
-      path: '/risk',
-      name: 'Risk',
-      component: Risk
+      path: '/world',
+      name: 'World',
+      component: World,
+      meta: {
+        title: "世界疫情预测地图",
+      }
     }
   ]
 })
