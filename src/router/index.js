@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import Resume from '@/components/Resume';
-import World from '@/components/World';
+import Resumption from '@/components/Resumption';
+import Forecasting from '@/components/Forecasting';
 
 Vue.use(Router);
 
@@ -9,8 +9,8 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'World',
-      component: World,
+      name: 'Forecasting',
+      component: Forecasting,
       meta: {
         title: "世界疫情预测地图",
       }
@@ -18,7 +18,7 @@ export default new Router({
     {
       path: '/resumption',
       name: 'resumption',
-      component: Resume,
+      component: Resumption,
       meta: {
         title: "中国复工复产地图",
       }
