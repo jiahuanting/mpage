@@ -11,7 +11,15 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'Forecasting',
+      name: 'Forecasting1',
+      component: Forecasting,
+      meta: {
+        title: "世界疫情预测地图",
+      }
+    },
+    {
+      path: '/forecasting',
+      name: 'Forecasting2',
       component: Forecasting,
       meta: {
         title: "世界疫情预测地图",
