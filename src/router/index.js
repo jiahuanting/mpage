@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import Resumption from '@/components/Resumption';
-import Forecasting from '@/components/Forecasting';
+import ResumptionZH from '@/components/Resumption';
+import ForecastingZH from '@/components/Forecasting';
 import ResumptionEN from '@/components/Resumption_en';
 import ForecastingEN from '@/components/Forecasting_en';
 
@@ -11,24 +11,24 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'Forecasting1',
-      component: Forecasting,
+      name: 'Forecasting_home',
+      component: ForecastingEN,
       meta: {
-        title: "世界疫情预测地图",
+        title: "Forecast Map of Global Coronavirus (COVID-19) Epidemic",
       }
     },
     {
       path: '/forecasting',
-      name: 'Forecasting2',
-      component: Forecasting,
+      name: 'ForecastingZH',
+      component: ForecastingZH,
       meta: {
         title: "世界疫情预测地图",
       }
     },
     {
       path: '/resumption',
-      name: 'Resumption',
-      component: Resumption,
+      name: 'ResumptionZH',
+      component: ResumptionZH,
       meta: {
         title: "中国复工复产地图",
       }
@@ -38,7 +38,7 @@ export default new Router({
       name: 'ForecastingEN',
       component: ForecastingEN,
       meta: {
-        title: "Forecast map of world epidemic",
+        title: "Forecast Map of Global Coronavirus (COVID-19) Epidemic",
       }
     },
     {
