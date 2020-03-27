@@ -18,7 +18,7 @@ export default new Router({
       }
     },
     {
-      path: '/forecasting',
+      path: '/forecasting_cn',
       name: 'ForecastingZH',
       component: ForecastingZH,
       meta: {
@@ -26,7 +26,7 @@ export default new Router({
       }
     },
     {
-      path: '/resumption',
+      path: '/resumption_cn',
       name: 'ResumptionZH',
       component: ResumptionZH,
       meta: {
@@ -34,7 +34,7 @@ export default new Router({
       }
     },
     {
-      path: '/forecasting_en',
+      path: '/forecasting',
       name: 'ForecastingEN',
       component: ForecastingEN,
       meta: {
@@ -42,7 +42,7 @@ export default new Router({
       }
     },
     {
-      path: '/resumption_en',
+      path: '/resumption',
       name: 'ResumptionEN',
       component: ResumptionEN,
       meta: {
