@@ -42,8 +42,24 @@ export default new Router({
       }
     },
     {
+      path: '/forecasting_en',
+      name: 'ForecastingEN_old',
+      component: ForecastingEN,
+      meta: {
+        title: "Forecast Map of Global Coronavirus (COVID-19) Epidemic",
+      }
+    },
+    {
       path: '/resumption',
       name: 'ResumptionEN',
+      component: ResumptionEN,
+      meta: {
+        title: "Resumption of work and production in China",
+      }
+    },
+    {
+      path: '/resumption_en',
+      name: 'ResumptionEN_old',
       component: ResumptionEN,
       meta: {
         title: "Resumption of work and production in China",
