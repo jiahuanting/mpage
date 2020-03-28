@@ -4,6 +4,7 @@ import ResumptionZH from '@/components/Resumption';
 import ForecastingZH from '@/components/Forecasting';
 import ResumptionEN from '@/components/Resumption_en';
 import ForecastingEN from '@/components/Forecasting_en';
+import Rvalue from '@/components/Rvalue';
 
 Vue.use(Router);
 
@@ -63,6 +64,14 @@ export default new Router({
       component: ResumptionEN,
       meta: {
         title: "Resumption of work and production in China",
+      }
+    },
+    {
+      path: '/r-value',
+      name: 'Rvalue',
+      component: Rvalue,
+      meta: {
+        title: "Effective Reproductive Number of COVID-19 determined by T&H",
       }
     }
   ]

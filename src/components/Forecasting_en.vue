@@ -6,14 +6,16 @@
 
 <script>
 export default {
-    name: 'World',
+    name: 'Forecasting',
 }
 </script>
 
 <style scoped>
     #show-iframe {
         position: absolute;
-        height: 100%;
+        height: calc(100% - 50px);
+        top: 50px;
+        left: 0px;
         width: 100%;
     }
 </style>
