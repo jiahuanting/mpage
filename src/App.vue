@@ -39,8 +39,8 @@
             </a>
           </div>
           <div class="text">
-            <p style="font-weight: 100; font-size: 14px;">Beihang University</p>
-            <p style="font-weight: 100; font-size: 14px;">COVID-19 Research Team</p>
+            <p style="font-weight: 600; font-size: 14px;">Beihang University</p>
+            <p style="font-weight: 600; font-size: 14px;">COVID-19 Research Team</p>
           </div>
         </div>
       </div>
