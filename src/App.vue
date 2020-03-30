@@ -10,14 +10,14 @@
         <div class="menu">
           <ul>
             <li>
-              <a href="#">Epidemic Forecast</a>
+              <a href="/#/forecasting">Epidemic Forecast</a>
               <ul>
                 <li><a href="/#/forecasting">English</a></li>
                 <li><a href="/#/forecasting_cn">Chinese</a></li>
               </ul>
             </li>
             <li>
-              <a href="#">Economic Recovery</a>
+              <a href="/#/resumption">Economic Recovery</a>
               <ul>
                 <li><a href="/#/resumption">English</a></li>
                 <li><a href="/#/resumption_cn">Chinese</a></li>
