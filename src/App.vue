@@ -10,6 +10,7 @@
         <div class="menu">
           <ul>
             <li>
+            <li>
               <a href="/#/forecasting">Epidemic Forecast</a>
               <ul>
                 <li><a href="/#/forecasting">English</a></li>
@@ -26,13 +27,22 @@
             <li>
               <a href="/#/r-value">Weather Effects</a>
             </li>
-            <li><a href="https://github.com/bigscity/nCov-predict" target="_blank">Data</a></li>
+            <li>
+              <a href="#">Resources</a>
+              <ul>
+                <li style="font-size: 12px;"><a href="/#/introduction">Introduction(EN)</a></li>
+                <li style="font-size: 12px;"><a href="/#/introduction_cn">Introduction(CN)</a></li>
+                <li style="font-size: 16px;"><a href="https://github.com/bigscity/nCov-predict" target="_blank">Data</a></li>
+                <li style="font-size: 16px;"><a href="/#/papers">Papers</a></li>
+              </ul>
+            </li>
+            
             <li><a href="https://www.bigscity.com/" target="_blank">BIGSCity Lab</a></li>
-          </ul> 
+          </ul>
         </div>
       </div>
       <div class="right">
-        <div class="panel">
+        <div class="panelcss">
           <div class="buaa">
             <a href="https://www.buaa.edu.cn/" target="_blank">
               <img src="static/images/buaalogo.png" alt="BUAALOGO" width="100%">
@@ -110,7 +120,7 @@ export default {
     width: 25%;
     height: 100%;
   }
-  .panel {
+  .panelcss {
     float: right;
     width: 100%;
     height: 100%;
@@ -127,7 +137,7 @@ export default {
   .buaa img {
     padding: 3%;
     width: 100%;
-    height: 60%;
+    height: 100%;
   }
   .text {
     float: left;
@@ -142,7 +152,7 @@ export default {
     display: flex;
     align-items: center;
   }
-  ul{
+  .menu ul{
     width: 100%;
     list-style-type: none;
     white-space: nowrap;
@@ -151,13 +161,13 @@ export default {
     padding: 0;
     align-items: center;
   }
-  li {
+  .menu li {
     float: left; /* 使li内容横向浮动，即横向排列 */
     padding-right: 1%;  /* 两个li之间的距离 */
     position: relative;
     overflow: hidden;
   }
-  li a{
+  .menu li a{
     display: block; /* 把链接显示为块元素可使整个链接区域可点击 */
     color:white;
     text-align: center;
@@ -166,31 +176,31 @@ export default {
     text-decoration: none; /* 去除下划线 */
     font-weight: 600;
   }
-  ul li ul{
+  .menu ul li ul{
     width: 100px;
     margin: 0px;
     background: #0065B3;
     position: fixed;
     display: none; /* 默认隐藏二级菜单的内容 */
   }
-  li a:hover{
+  .menu li a:hover{
     background-color: #aaa;
     transition: 0.8s;
   }
-  ul li ul li a:hover {
+  .menu ul li ul li a:hover {
     transition: 0.8s;
     background-color: #aaa;
   }
-  ul li ul li a {
+  .menu ul li ul li a {
     border-top: 1px solid #fff;
   }
-  ul li ul li {
+  .menu ul li ul li {
     padding: 0px;
     margin: 0px;
     float: none;
     text-align: center;
   }
-  ul li:hover ul  {
+  .menu ul li:hover ul  {
     display: block;
   }
   #show-iframe {

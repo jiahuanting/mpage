@@ -1,10 +1,13 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import ResumptionZH from '@/components/Resumption';
-import ForecastingZH from '@/components/Forecasting';
+import ResumptionCN from '@/components/Resumption';
+import ForecastingCN from '@/components/Forecasting';
 import ResumptionEN from '@/components/Resumption_en';
 import ForecastingEN from '@/components/Forecasting_en';
 import Rvalue from '@/components/Rvalue';
+import IntroductionEN from '@/components/Introduction_en';
+import IntroductionCN from '@/components/Introduction';
+import Papers from '@/components/Papers';
 
 Vue.use(Router);
 
@@ -19,9 +22,25 @@ export default new Router({
       }
     },
     {
+      path: '/introduction',
+      name: 'IntroductionEN',
+      component: IntroductionEN,
+      meta: {
+        title: "Forecast Map of Global Coronavirus (COVID-19) Epidemic",
+      }
+    },
+    {
+      path: '/introduction_cn',
+      name: 'IntroductionCN',
+      component: IntroductionCN,
+      meta: {
+        title: "COVID-2019疫情地图",
+      }
+    },
+    {
       path: '/forecasting_cn',
       name: 'ForecastingZH',
-      component: ForecastingZH,
+      component: ForecastingCN,
       meta: {
         title: "世界疫情预测地图",
       }
@@ -29,7 +48,7 @@ export default new Router({
     {
       path: '/resumption_cn',
       name: 'ResumptionZH',
-      component: ResumptionZH,
+      component: ResumptionCN,
       meta: {
         title: "中国复工复产地图",
       }
@@ -72,6 +91,14 @@ export default new Router({
       component: Rvalue,
       meta: {
         title: "Effective Reproductive Number of COVID-19 determined by T&H",
+      }
+    },
+    {
+      path: '/papers',
+      name: 'Papers',
+      component: Papers,
+      meta: {
+        title: "Papers",
       }
     }
   ]
