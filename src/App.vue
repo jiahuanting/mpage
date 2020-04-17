@@ -10,11 +10,17 @@
         <div class="menu">
           <ul>
             <li>
-            <li>
               <a href="/#/forecasting">Epidemic Forecast</a>
               <ul>
                 <li><a href="/#/forecasting">English</a></li>
                 <li><a href="/#/forecasting_cn">Chinese</a></li>
+              </ul>
+            </li>
+            <li>
+              <a href="/#/world-r-value">R-value</a>
+              <ul>
+                <li><a href="/#/world-r-value">World</a></li>
+                <li><a href="/#/usa-r-value">USA</a></li>
               </ul>
             </li>
             <li>
@@ -25,7 +31,7 @@
               </ul>
             </li>
             <li>
-              <a href="/#/r-value">Weather Effects</a>
+              <a href="/#/weather-effects">Weather Effects</a>
             </li>
             <li>
               <a href="#">Resources</a>
