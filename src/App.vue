@@ -20,7 +20,7 @@
               <a href="/#/r-value-world">R-value</a>
               <ul>
                 <li><a href="/#/r-value-world">World</a></li>
-                <li><a href="/#/r-value-usa">USA</a></li>
+                <li><a href="/#/usa">USA</a></li>
               </ul>
             </li>
             <li>
