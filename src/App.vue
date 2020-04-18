@@ -17,11 +17,14 @@
               </ul>
             </li>
             <li>
-              <a href="/#/world-r-value">R-value</a>
+              <a href="/#/r-value-world">R-value</a>
               <ul>
-                <li><a href="/#/world-r-value">World</a></li>
-                <li><a href="/#/usa-r-value">USA</a></li>
+                <li><a href="/#/r-value-world">World</a></li>
+                <li><a href="/#/r-value-usa">USA</a></li>
               </ul>
+            </li>
+            <li>
+              <a href="/#/usa">USA</a>
             </li>
             <li>
               <a href="/#/resumption">Economic Recovery</a>
@@ -40,10 +43,9 @@
                 <li style="font-size: 12px;"><a href="/#/introduction_cn">Introduction(CN)</a></li>
                 <li style="font-size: 16px;"><a href="https://github.com/bigscity/nCov-predict" target="_blank">Data</a></li>
                 <li style="font-size: 16px;"><a href="/#/papers">Papers</a></li>
+                <li style="font-size: 12px;"><a href="https://www.bigscity.com/" target="_blank">BIGSCity Lab</a></li>
               </ul>
             </li>
-            
-            <li><a href="https://www.bigscity.com/" target="_blank">BIGSCity Lab</a></li>
           </ul>
         </div>
       </div>

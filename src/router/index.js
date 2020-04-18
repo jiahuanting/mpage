@@ -74,9 +74,26 @@ export default new Router({
         title: "Resumption of work and production in China",
       }
     },
+    // usa
+    {
+      path: '/usa',
+      name:'USA',
+      component: USA,
+      meta: {
+        title: "USA COVID19 Analysis"
+      }
+    },
     // weather effects
     {
       path: '/weather-effects',
+      name: 'Rvalue',
+      component: WeatherEffects,
+      meta: {
+        title: "Effective Reproductive Number of COVID-19 determined by T&H",
+      }
+    },
+    {
+      path: '/r-value',
       name: 'Rvalue',
       component: WeatherEffects,
       meta: {
@@ -94,7 +111,7 @@ export default new Router({
     },
     // world and usa r-value
     {
-      path: '/world-r-value',
+      path: '/r-value-world',
       name: 'World',
       component: World,
       meta: {
@@ -102,11 +119,11 @@ export default new Router({
       }
     },
     {
-      path: '/usa-r-value',
-      name: 'USA',
+      path: '/r-value-usa',
+      name: 'USAR',
       component: USA,
       meta: {
-        title: "USA R Value",
+        title: "USA COVID19 Analysis",
       }
     }
 
