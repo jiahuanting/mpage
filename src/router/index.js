@@ -10,6 +10,7 @@ import IntroductionCN from '@/components/Introduction';
 import Papers from '@/components/Papers';
 import World from '@/components/World';
 import USA from '@/components/USA';
+import Russia from '@/components/Russia';
 
 Vue.use(Router);
 
@@ -81,6 +82,14 @@ export default new Router({
       component: USA,
       meta: {
         title: "USA COVID19 Analysis"
+      }
+    },
+    {
+      path: '/russia',
+      name:'Russia',
+      component: Russia,
+      meta: {
+        title: "Russia COVID19 Analysis"
       }
     },
     // weather effects

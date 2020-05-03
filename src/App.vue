@@ -24,7 +24,11 @@
               </ul>
             </li>
             <li>
-              <a href="/#/usa">USA</a>
+              <a href="/#/usa">Country</a>
+              <ul>
+                <li><a href="/#/usa">USA</a></li>
+                <li><a href="/#/russia">Russia</a></li>
+              </ul>
             </li>
             <li>
               <a href="/#/resumption">Economic Recovery</a>
