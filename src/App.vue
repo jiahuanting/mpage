@@ -17,29 +17,12 @@
               </ul>
             </li>
             <li>
-              <a href="/#/r-value-world">R-value</a>
-              <ul>
-                <li><a href="/#/r-value-world">World</a></li>
-                <li><a href="/#/usa">USA</a></li>
-              </ul>
+              <a href="/#/r-value-world">World</a>
             </li>
             <li>
-              <a href="/#/usa">Country</a>
-              <ul>
-                <li><a href="/#/usa">USA</a></li>
-                <li><a href="/#/russia">Russia</a></li>
-              </ul>
+              <a href="/#/usa">USA</a>
             </li>
-            <li>
-              <a href="/#/resumption">Economic Recovery</a>
-              <ul>
-                <li><a href="/#/resumption">English</a></li>
-                <li><a href="/#/resumption_cn">Chinese</a></li>
-              </ul>
-            </li>
-            <li>
-              <a href="/#/weather-effects">Weather Effects</a>
-            </li>
+            <!--20201008-->
             <li>
               <a href="#">Resources</a>
               <ul>
