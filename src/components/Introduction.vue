@@ -8,7 +8,7 @@
                     </div>
                     <div>
                         <p class="text-justify">
-                            全球疫情分析预测可视化服务（网址：<a href="http://covid19-report.com/">http://covid19-report.com/</a>）是由北京航空航天大学计算机学院智慧城市课题组（BIGSCity）开发，主要分为三个栏目：全球新冠肺炎疫情预测地图、世界总体和美国的R-value等可视化地图，每个栏目每周会定时更新数据。
+                            全球疫情分析预测可视化服务（网址：<a href="http://covid19-report.com/">http://covid19-report.com/</a>）是由北京航空航天大学计算机学院智慧城市课题组（BIGSCity）开发，主要分为三个栏目：全球新冠肺炎疫情预测地图、重点国家疫情指标监控地图、中国复工复产地图，每个栏目每周会定时更新数据。
                         </p>
                     </div>
                     <div class="pt-3 pb-3">
@@ -21,22 +21,21 @@
                         </div>
                     </div>
                     <div class="pt-3 pb-3">
-                        <h4>二、	世界范围内R-value等指标的变化情况</h4>
+                        <h4>二、	疫情指标监控地图</h4>
                         <p class="text-justify">
-                            我们持续关注世界范围内的疫情发展状况，并尝试用R value以及Double Index等指标衡量各个国家疫情的严重程度，以期提供一种直观的疫情跟踪指标。R value根据前面多个阶段的确诊人数计算得到，该指标表示一名患者在患病期间感染的人数，衡量病毒的传播能力，如果该指标小于1，则表示疫情正处于缓解过程中，反之亦然。Double Index根据公式“D=过去7日内的累计确诊数/过去7-14日的累计确诊数”计算得出，当该值大于1，说明过去14天内该地区的疫情仍然没有控制住，疫情风险较大；当该值在一段时间内都处于一个较小的位置，则可以判断疫情得到了有效的控制。
+                            我们持续关注世界范围内的疫情发展状况，并尝试用R value以及Double Index等指标衡量各个国家疫情的严重程度，以期提供一种直观的疫情跟踪指标。R value根据前面多个阶段的确诊人数计算得到，该指标表示一名患者在患病期间感染的人数，衡量病毒的传播能力，如果该指标小于1，则表示疫情正处于缓解过程中，反之亦然。Double Index根据公式“D=过去7日内的累计确诊数/过去7-14日的累计确诊数”计算得出，当该值大于1，说明过去14天内该地区的疫情仍然没有控制住，疫情风险较大；当该值在一段时间内都处于一个较小的位置，则可以判断疫情得到了有效的控制。美国作为全球最大的经济体，同时也是世界范围内疫情最严重的国家，其疫情发展状况对全球抗疫事业有决定性的影响，为此我们重点关注了美国的疫情相关指标。页面结构如图所示，中间地图部分是对各种指标的可视化结果，除上述R value以及Double Index以外，还包含了positive rate和ICU Rate。其中Positive Rate使用公式“P=7日内新增确诊/7日内新增检测”计算得出，用于大致衡量人群中的感染比例，ICU Rate采用华盛顿大学的“卫生指标与评估研究所”（Institute for Health Metrics and Evaluation）的评估结果，使用公式“ICURate=ICU需求量/ICU容量”计算得出，可以衡量当地医疗资源的供给情况。在俄罗斯疫情指标监控地图中，我们引入了与美国同样的指标。
                         </p>
                         <div>
                             <a href="/#/r-value-world"><img src="static/images/intro/pic_r_world.jpg" alt="RESUMPTION" width="100%" class="img-rounded p-3"></a>
                         </div>
                     </div>
                     <div class="pt-3 pb-3">
-                        <h4>三、	美国疫情跟踪地图</h4>
+                        <h4>三、	中国复工复产地图</h4>
                         <p class="text-justify">
-                            美国作为全球最大的经济体，同时也是世界范围内疫情最严重的国家，其疫情发展状况对全球抗疫事业有决定性的影响，为此我们重点关注了美国的疫情相关指标。页面结构如图所示，中间地图部分是对各种指标的可视化结果，除上述R value以及Double Index以外，还包含了positive rate和ICU Rate。其中Positive Rate使用公式“P=7日内新增确诊/7日内新增检测”计算得出，用于大致衡量人群中的感染比例，ICU Rate采用华盛顿大学的“卫生指标与评估研究所”（Institute for Health Metrics and Evaluation）的评估结果，使用公式“ICURate=ICU需求量/ICU容量”计算得出，可以衡量当地医疗资源的供给情况。
+                            中国的复工复产地图利用人口流动数据对城市的缺工以及复工情况进行可视化展示。左边一栏的上方是全国的恢复指数、复工指数以及缺工指数的总体数据，下方是全国各省、市、自治区的复工指数；中间地图部分是以市为粒度展示了复工情况和缺工情况，复工地图中复工指数越小颜色越深复工程度也就越低，缺工地图中缺工指数越大颜色越深表示缺工情况越严重；中间图表部分是所选中的省、市、自治区自2月10号以后复工/缺工指数的历史数据曲线；右边一栏展示了年后人口流入和流出前10的城市。
                         </p>
-                     
                         <div>
-                            <a href="/#/usa"><img src="static/images/intro/pic_usa.jpg" alt="R" width="100%" class="img-rounded p-3"></a>
+                            <a href="/#/resumption_cn/"><img src="static/images/intro/pic_resumption_cn.png" alt="R" width="100%" class="img-rounded p-3"></a>
                         </div>
                     </div>
                     <div class="pt-3 pb-3">

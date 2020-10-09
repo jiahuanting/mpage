@@ -22,7 +22,16 @@
             <li>
               <a href="/#/usa">USA</a>
             </li>
-            <!--20201008-->
+            <li>
+              <a href="/#/russia">Russia</a>
+            </li>
+            <li>
+              <a href="/#/resumption">Economic Recovery</a>
+              <ul>
+                <li><a href="/#/resumption">English</a></li>
+                <li><a href="/#/resumption_cn">Chinese</a></li>
+              </ul>
+            </li>
             <li>
               <a href="#">Resources</a>
               <ul>
